@@ -3,19 +3,24 @@ version: "3.8"
 services:
   backend:
     build: ./backend
+    container_name: yicode-backend
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     volumes:
       - ./data:/app/data
       - ./solutions:/app/solutions
     environment:
       - DATABASE_URL=sqlite:////app/data/yicode.db
+      - SECRET_KEY=<change-me-to-a-long-random-string>
+      - CORS_ORIGINS=["http://<your-server-ip>"]
+      - LLM_PROVIDER=mock
     restart: unless-stopped
 
   frontend:
     build: ./frontend
+    container_name: yicode-frontend
     ports:
-      - "5173:80"
+      - "80:80"
     depends_on:
       - backend
     restart: unless-stopped
