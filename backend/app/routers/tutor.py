@@ -1,8 +1,9 @@
 """
-AI Tutor API Router — Phase 2
+AI Tutor API Router — Phase 2 + Phase 4 SSE
 """
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
@@ -32,6 +33,34 @@ async def get_hint(req: HintRequest, db: Session = Depends(get_db)):
         "tokens_used": result.tokens_used,
         "latency_ms": result.latency_ms,
     }
+
+
+@router.get("/hint-stream/{problem_id}")
+async def get_hint_stream(
+    problem_id: int,
+    level: int = 1,
+    db: Session = Depends(get_db),
+):
+    """SSE 流式获取 AI 解题提示。"""
+    if level not in (1, 2, 3):
+        raise HTTPException(status_code=422, detail="hint_level must be 1, 2, or 3")
+
+    service = AITutorService(db)
+
+    async def event_generator():
+        async for chunk in service.generate_hint_stream(problem_id=problem_id, level=level):
+            yield f"data: {chunk}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @router.post("/review-code", response_model=CodeReviewResponse)

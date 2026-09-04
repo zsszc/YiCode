@@ -38,6 +38,16 @@ class BaseLLMProvider:
     ) -> HintResult:
         raise NotImplementedError
 
+    async def generate_hint_stream(
+        self,
+        problem: "Problem",
+        level: int,
+        user_code: Optional[str],
+        profile: Optional["LearningProfile"],
+    ):
+        """流式生成解题提示（异步生成器，yield 字符串片段）。"""
+        raise NotImplementedError
+
     async def review_code(
         self,
         problem: "Problem",

@@ -85,6 +85,49 @@ class AITutorService:
         self.db.commit()
         return result
 
+    async def generate_hint_stream(
+        self,
+        problem_id: int,
+        level: int = 1,
+        user_code: Optional[str] = None,
+        user_id: int = 1,
+    ):
+        """流式生成解题提示（异步生成器）。"""
+        if level not in (1, 2, 3):
+            raise ValueError("hint_level must be 1, 2, or 3")
+
+        problem = self.db.query(Problem).filter(Problem.id == problem_id).first()
+        if not problem:
+            raise ValueError(f"Problem {problem_id} not found")
+
+        profile = (
+            self.db.query(LearningProfile)
+            .filter(LearningProfile.user_id == user_id)
+            .first()
+        )
+
+        # 记录行为（不等待流结束）
+        behavior = UserBehavior(
+            user_id=user_id,
+            problem_id=problem_id,
+            action_type="hint_stream",
+            action_data=json.dumps({"hint_level": level}),
+        )
+        self.db.add(behavior)
+
+        from app.models.progress import Progress
+        progress = (
+            self.db.query(Progress)
+            .filter(Progress.user_id == user_id, Progress.problem_id == problem_id)
+            .first()
+        )
+        if progress:
+            progress.hint_count = (progress.hint_count or 0) + 1
+        self.db.commit()
+
+        async for chunk in self.provider.generate_hint_stream(problem, level, user_code, profile):
+            yield chunk
+
     async def review_code(
         self,
         problem_id: int,

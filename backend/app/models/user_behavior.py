@@ -21,7 +21,7 @@ class UserBehavior(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "action_type IN ('open','hint','attempt','submit','review','skip')",
+            "action_type IN ('open','hint','hint_stream','attempt','submit','review','skip')",
             name="ck_user_behavior_action_type",
         ),
     )

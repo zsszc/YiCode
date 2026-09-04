@@ -5,7 +5,7 @@ from pathlib import Path
 
 from app.config import get_settings, DATA_DIR
 from app.core.database import engine, Base
-from app.routers import dashboard, problems, review, auth, tutor, profile, feishu, export
+from app.routers import dashboard, problems, review, auth, tutor, profile, feishu, export, evolution, code_runner
 
 settings = get_settings()
 
@@ -44,6 +44,8 @@ app.include_router(tutor.router, prefix=settings.api_v1_prefix)
 app.include_router(profile.router, prefix=settings.api_v1_prefix)
 app.include_router(feishu.router, prefix=settings.api_v1_prefix)
 app.include_router(export.router, prefix=settings.api_v1_prefix)
+app.include_router(evolution.router, prefix=settings.api_v1_prefix)
+app.include_router(code_runner.router, prefix=settings.api_v1_prefix)
 
 
 @app.get("/health")

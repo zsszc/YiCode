@@ -1,11 +1,12 @@
 import { Routes, Route, Link, Navigate } from 'react-router-dom'
-import { BookOpen, LayoutDashboard, Settings, LogOut, User } from 'lucide-react'
+import { BookOpen, LayoutDashboard, Settings, LogOut, User, TrendingUp } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import DashboardPage from './pages/DashboardPage'
 import ProblemsPage from './pages/ProblemsPage'
 import ProblemDetailPage from './pages/ProblemDetailPage'
 import SettingsPage from './pages/SettingsPage'
 import AuthPage from './pages/AuthPage'
+import LearningCurvePage from './pages/LearningCurvePage'
 
 function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('yicode_token'))
@@ -52,6 +53,7 @@ function App() {
             <div className="flex items-center gap-1">
               <NavLink to="/" icon={<LayoutDashboard size={18} />} label="看板" />
               <NavLink to="/problems" icon={<BookOpen size={18} />} label="题库" />
+              <NavLink to="/learning-curve" icon={<TrendingUp size={18} />} label="曲线" />
               <NavLink to="/settings" icon={<Settings size={18} />} label="设置" />
               {user && (
                 <div className="flex items-center gap-2 ml-2 pl-2 border-l border-gray-200">
@@ -78,6 +80,7 @@ function App() {
           <Route path="/" element={<DashboardPage />} />
           <Route path="/problems" element={<ProblemsPage />} />
           <Route path="/problems/:id" element={<ProblemDetailPage />} />
+          <Route path="/learning-curve" element={<LearningCurvePage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

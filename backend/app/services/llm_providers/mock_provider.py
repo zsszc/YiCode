@@ -98,6 +98,23 @@ class MockLLMProvider(BaseLLMProvider):
         latency = int((time.time() - start) * 1000)
         return HintResult(content=text, tokens_used=len(text) // 2, latency_ms=latency)
 
+    async def generate_hint_stream(
+        self,
+        problem,
+        level: int,
+        user_code: Optional[str],
+        profile,
+    ):
+        """流式生成提示，按句子 yield。"""
+        text = _get_hint_text(problem, level, profile)
+        # 按句子分割，模拟流式输出
+        import re
+        sentences = re.split(r'(?<=。)|(?<=\n)', text)
+        for s in sentences:
+            s = s.strip()
+            if s:
+                yield s
+
     async def review_code(
         self,
         problem,
