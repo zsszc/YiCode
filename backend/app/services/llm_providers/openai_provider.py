@@ -16,6 +16,7 @@ from app.services.llm_providers.kimi_provider import (
     _build_hint_messages,
     _build_review_messages,
     _parse_review_json,
+    _stream_chat,
 )
 
 settings = get_settings()
@@ -70,6 +71,21 @@ class OpenAIProvider(BaseLLMProvider):
         latency = int((time.time() - start) * 1000)
 
         return HintResult(content=content, tokens_used=tokens, latency_ms=latency)
+
+    async def generate_hint_stream(
+        self,
+        problem,
+        level: int,
+        user_code: Optional[str],
+        profile,
+    ):
+        """流式生成解题提示。"""
+        messages = _build_hint_messages(problem, level, user_code, profile)
+        async for chunk in _stream_chat(
+            self.base_url, self.api_key, self.model,
+            messages, self.timeout, self.max_tokens, self.temperature,
+        ):
+            yield chunk
 
     async def review_code(
         self,

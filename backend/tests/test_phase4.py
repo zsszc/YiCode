@@ -1,5 +1,5 @@
 """
-Phase 4 测试 — AI Agent 自进化
+Phase 4/5 测试 — AI Agent 自进化 + 安全沙箱
 """
 
 import pytest
@@ -9,6 +9,7 @@ from app.models.problem import Problem
 from app.models.knowledge_graph import KnowledgeNode, ProblemKnowledge, UserKnowledgeMastery
 from app.models.mistake_analysis import MistakeAnalysis
 from app.services.self_evolution_service import SelfEvolutionService
+from app.services.code_runner_service import static_check
 
 
 class TestMistakeAnalysis:
@@ -239,8 +240,9 @@ class TestCodeRunnerAPI:
         })
         assert resp.status_code == 200
         data = resp.json()
-        assert data["exit_code"] != 0
-        assert "SyntaxError" in data["stderr"] or "EOF" in data["stderr"]
+        # 语法错误被 AST 静态拦截（exit_code=-2）
+        assert data["exit_code"] == -2
+        assert "语法错误" in data["stderr"]
 
     def test_run_code_timeout(self, client):
         resp = client.post("/api/v1/code/run", json={
@@ -251,19 +253,82 @@ class TestCodeRunnerAPI:
         data = resp.json()
         assert data["timed_out"] is True
 
-    def test_run_code_banned_builtin(self, client):
+    def test_run_code_banned_builtin_static(self, client):
+        """AST 静态分析应拦截 eval 调用。"""
         resp = client.post("/api/v1/code/run", json={
             "code": "eval('1+1')",
         })
         assert resp.status_code == 200
         data = resp.json()
-        # eval 被删除后会报 NameError
-        assert "NameError" in data["stderr"] or data["exit_code"] != 0
+        assert data["exit_code"] == -2
+        assert "安全沙箱拦截" in data["stderr"]
 
-    def test_run_code_banned_import(self, client):
+    def test_run_code_banned_import_static(self, client):
+        """AST 静态分析应拦截 import os。"""
         resp = client.post("/api/v1/code/run", json={
             "code": "import os\nprint(os.getcwd())",
         })
         assert resp.status_code == 200
         data = resp.json()
-        assert "ImportError" in data["stderr"] or data["exit_code"] != 0
+        assert data["exit_code"] == -2
+        assert "安全沙箱拦截" in data["stderr"]
+
+    def test_run_code_banned_getattr_static(self, client):
+        """AST 静态分析应拦截 getattr 动态属性访问。"""
+        resp = client.post("/api/v1/code/run", json={
+            "code": "import math\ngetattr(math, '__dict__')",
+        })
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["exit_code"] == -2
+        assert "安全沙箱拦截" in data["stderr"]
+        assert "getattr" in data["stderr"]
+
+    def test_run_code_banned_attribute_static(self, client):
+        """AST 静态分析应拦截危险属性访问如 os.system。"""
+        resp = client.post("/api/v1/code/run", json={
+            "code": "import math\nmath.system('ls')",
+        })
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["exit_code"] == -2
+        assert "安全沙箱拦截" in data["stderr"]
+        assert "system" in data["stderr"]
+
+
+class TestCodeSandboxUnit:
+    """代码沙箱单元测试 — 不依赖 HTTP client。"""
+
+    def test_static_check_safe_code(self):
+        violations = static_check("print('hello')\nx = 1 + 2")
+        assert violations == []
+
+    def test_static_check_banned_import(self):
+        violations = static_check("import os")
+        assert len(violations) == 1
+        assert "os" in violations[0]
+
+    def test_static_check_banned_from_import(self):
+        violations = static_check("from os.path import join")
+        assert len(violations) == 1
+        assert "os" in violations[0]
+
+    def test_static_check_banned_builtin(self):
+        violations = static_check("eval('1+1')")
+        assert len(violations) == 1
+        assert "eval" in violations[0]
+
+    def test_static_check_banned_getattr(self):
+        violations = static_check("getattr(obj, 'name')")
+        assert len(violations) == 1
+        assert "getattr" in violations[0]
+
+    def test_static_check_banned_attribute(self):
+        violations = static_check("os.system('ls')")
+        assert len(violations) == 1  # system 属性（os 不是 import，AST 不检测）
+        assert "system" in violations[0]
+
+    def test_static_check_syntax_error(self):
+        violations = static_check("print('unclosed")
+        assert len(violations) == 1
+        assert "语法错误" in violations[0]

@@ -68,6 +68,42 @@ def _build_review_messages(problem, code: str, language: str) -> list[dict]:
     ]
 
 
+async def _stream_chat(base_url: str, api_key: str, model: str, messages: list, timeout: float, max_tokens: int, temperature: float):
+    """共享流式聊天实现（异步生成器）。"""
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        async with client.stream(
+            "POST",
+            f"{base_url}/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "model": model,
+                "messages": messages,
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+                "stream": True,
+            },
+        ) as resp:
+            resp.raise_for_status()
+            async for line in resp.aiter_lines():
+                line = line.strip()
+                if not line or not line.startswith("data: "):
+                    continue
+                json_str = line[6:].strip()
+                if json_str == "[DONE]":
+                    break
+                try:
+                    chunk = json.loads(json_str)
+                    delta = chunk.get("choices", [{}])[0].get("delta", {})
+                    content = delta.get("content", "")
+                    if content:
+                        yield content
+                except (json.JSONDecodeError, IndexError, KeyError):
+                    continue
+
+
 class KimiProvider(BaseLLMProvider):
     """Kimi (Moonshot AI) LLM Provider。"""
 
@@ -114,6 +150,21 @@ class KimiProvider(BaseLLMProvider):
         latency = int((time.time() - start) * 1000)
 
         return HintResult(content=content, tokens_used=tokens, latency_ms=latency)
+
+    async def generate_hint_stream(
+        self,
+        problem,
+        level: int,
+        user_code: Optional[str],
+        profile,
+    ):
+        """流式生成解题提示。"""
+        messages = _build_hint_messages(problem, level, user_code, profile)
+        async for chunk in _stream_chat(
+            self.base_url, self.api_key, self.model,
+            messages, self.timeout, self.max_tokens, self.temperature,
+        ):
+            yield chunk
 
     async def review_code(
         self,
