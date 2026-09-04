@@ -1,3 +1,3 @@
-from app.routers import dashboard, problems, review, auth
+from app.routers import dashboard, problems, review, auth, tutor, profile, feishu, export
 
-__all__ = ["dashboard", "problems", "review", "auth"]
+__all__ = ["dashboard", "problems", "review", "auth", "tutor", "profile", "feishu", "export"]

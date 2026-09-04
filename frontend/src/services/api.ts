@@ -16,6 +16,15 @@ const api = axios.create({
   },
 })
 
+// 请求拦截器：自动附加 JWT token
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('yicode_token')
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
+})
+
 export const dashboardApi = {
   getToday: () => api.get<DashboardData>('/dashboard').then(r => r.data),
   shiftForward: () => api.post<{ shifted_count: number; message: string }>('/dashboard/shift-forward').then(r => r.data),
@@ -67,4 +76,13 @@ export const profileApi = {
       action_type: actionType,
       action_data: actionData,
     }).then(r => r.data),
+}
+
+// Phase 3: Auth
+export const authApi = {
+  login: (username: string, password: string) =>
+    api.post('/auth/login', { username, password }).then(r => r.data),
+  register: (username: string, password: string, email?: string) =>
+    api.post('/auth/register', { username, password, email }).then(r => r.data),
+  me: () => api.get('/auth/me').then(r => r.data),
 }

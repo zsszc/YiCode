@@ -12,7 +12,9 @@ from app.models.progress import Progress
 from app.models.user_behavior import UserBehavior
 from app.models.learning_profile import LearningProfile
 from app.models.ai_tutor_log import AITutorLog
-from app.services.ai_tutor_service import AITutorService, MockLLMProvider
+from app.services.ai_tutor_service import AITutorService
+from app.services.llm_providers.mock_provider import MockLLMProvider
+from app.services.learning_profile_service import LearningProfileService
 from app.services.learning_profile_service import LearningProfileService
 
 

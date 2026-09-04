@@ -22,6 +22,7 @@ from app.schemas.profile import (
     BehaviorRecordRequest,
     PatternAnalysis,
 )
+from app.schemas.auth import UserRegister, UserLogin, UserOut
 
 __all__ = [
     "ProblemOut",
@@ -47,4 +48,7 @@ __all__ = [
     "AdaptiveRecommendation",
     "BehaviorRecordRequest",
     "PatternAnalysis",
+    "UserRegister",
+    "UserLogin",
+    "UserOut",
 ]

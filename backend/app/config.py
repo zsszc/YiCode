@@ -41,6 +41,15 @@ class Settings(BaseSettings):
     feishu_webhook: str = ""
     feishu_secret: str = ""
 
+    # LLM (Phase 3)
+    llm_provider: str = "mock"  # mock | kimi | openai
+    llm_api_key: str = ""
+    llm_base_url: str = ""
+    llm_model: str = ""
+    llm_timeout_seconds: int = 30
+    llm_max_tokens: int = 2048
+    llm_temperature: float = 0.7
+
     class Config:
         env_file = str(ROOT.parent / ".env")
         env_file_encoding = "utf-8"
