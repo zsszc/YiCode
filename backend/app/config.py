@@ -23,7 +23,8 @@ class Settings(BaseSettings):
     secret_key: str = "yicode-dev-secret-change-in-production"
     access_token_expire_days: int = 7
 
-    # CORS
+    # CORS（逗号分隔多个来源）
+    cors_origins: str = "http://localhost:5173,http://localhost:3000"
     cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
 
     # SM-2 默认配置

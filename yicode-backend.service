@@ -1,0 +1,19 @@
+[Unit]
+Description=YiCode Backend (FastAPI)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/yicode/backend
+Environment=DATABASE_URL=sqlite:////opt/yicode/data/yicode.db
+Environment=SECRET_KEY=<change-me-to-a-long-random-string>
+Environment=CORS_ORIGINS=http://<your-server-ip>"http://<your-server-ip>"]
+Environment=LLM_PROVIDER=mock
+Environment=PYTHONPATH=/opt/yicode/backend
+ExecStart=/usr/bin/python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
