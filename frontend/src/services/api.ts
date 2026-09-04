@@ -1,5 +1,13 @@
 import axios from 'axios'
-import type { DashboardData, Problem, Progress } from '@/types'
+import type {
+  DashboardData,
+  Problem,
+  Progress,
+  HintResponse,
+  CodeReviewResponse,
+  LearningProfile,
+  AdaptiveRecommendation,
+} from '@/types'
 
 const api = axios.create({
   baseURL: '/api/v1',
@@ -27,4 +35,36 @@ export const reviewApi = {
     api.post<Progress>(`/review/${problemId}`, { score }).then(r => r.data),
   updateNote: (problemId: number, note: string) =>
     api.put<Progress>(`/review/${problemId}/note`, { note }).then(r => r.data),
+}
+
+// Phase 2: AI Tutor
+export const tutorApi = {
+  hint: (problemId: number, hintLevel: number = 1, userCode?: string) =>
+    api.post<HintResponse>('/tutor/hint', {
+      problem_id: problemId,
+      hint_level: hintLevel,
+      user_code: userCode,
+    }).then(r => r.data),
+  reviewCode: (problemId: number, code: string, language: string = 'python') =>
+    api.post<CodeReviewResponse>('/tutor/review-code', {
+      problem_id: problemId,
+      code,
+      language,
+    }).then(r => r.data),
+  logs: (limit: number = 20) =>
+    api.get('/tutor/logs', { params: { limit } }).then(r => r.data),
+}
+
+// Phase 2: Learning Profile
+export const profileApi = {
+  get: () => api.get<LearningProfile>('/profile').then(r => r.data),
+  update: (data: Partial<LearningProfile>) =>
+    api.put<LearningProfile>('/profile', data).then(r => r.data),
+  adaptive: () => api.get<AdaptiveRecommendation>('/profile/adaptive').then(r => r.data),
+  recordBehavior: (problemId: number, actionType: string, actionData?: object) =>
+    api.post('/profile/behaviors', {
+      problem_id: problemId,
+      action_type: actionType,
+      action_data: actionData,
+    }).then(r => r.data),
 }

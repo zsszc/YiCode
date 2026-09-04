@@ -1,7 +1,9 @@
 import { Routes, Route, Link } from 'react-router-dom'
-import { BookOpen, Calendar, LayoutDashboard, Settings } from 'lucide-react'
+import { BookOpen, LayoutDashboard, Settings } from 'lucide-react'
 import DashboardPage from './pages/DashboardPage'
 import ProblemsPage from './pages/ProblemsPage'
+import ProblemDetailPage from './pages/ProblemDetailPage'
+import SettingsPage from './pages/SettingsPage'
 
 function App() {
   return (
@@ -28,7 +30,8 @@ function App() {
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/problems" element={<ProblemsPage />} />
-          <Route path="/settings" element={<div className="text-journal-muted">设置页面开发中...</div>} />
+          <Route path="/problems/:id" element={<ProblemDetailPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </main>
     </div>

@@ -8,6 +8,20 @@ from app.schemas.review import (
     ReviewLogOut,
 )
 from app.schemas.dashboard import DashboardOut, PreviewDay, ShiftForwardResponse
+from app.schemas.tutor import (
+    HintRequest,
+    HintResponse,
+    CodeReviewRequest,
+    CodeReviewResponse,
+    TutorLogItem,
+)
+from app.schemas.profile import (
+    ProfileOut,
+    ProfileUpdate,
+    AdaptiveRecommendation,
+    BehaviorRecordRequest,
+    PatternAnalysis,
+)
 
 __all__ = [
     "ProblemOut",
@@ -23,4 +37,14 @@ __all__ = [
     "DashboardOut",
     "PreviewDay",
     "ShiftForwardResponse",
+    "HintRequest",
+    "HintResponse",
+    "CodeReviewRequest",
+    "CodeReviewResponse",
+    "TutorLogItem",
+    "ProfileOut",
+    "ProfileUpdate",
+    "AdaptiveRecommendation",
+    "BehaviorRecordRequest",
+    "PatternAnalysis",
 ]

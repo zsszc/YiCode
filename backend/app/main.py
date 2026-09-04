@@ -5,7 +5,7 @@ from pathlib import Path
 
 from app.config import get_settings, DATA_DIR
 from app.core.database import engine, Base
-from app.routers import dashboard, problems, review, auth
+from app.routers import dashboard, problems, review, auth, tutor, profile, feishu
 
 settings = get_settings()
 
@@ -43,7 +43,12 @@ app.add_middleware(
 app.include_router(dashboard.router, prefix=settings.api_v1_prefix)
 app.include_router(problems.router, prefix=settings.api_v1_prefix)
 app.include_router(review.router, prefix=settings.api_v1_prefix)
-app.include_router(auth.router, prefix=settings.api_v1_prefix)
+app.include_router(tutor.router, prefix=settings.api_v1_prefix)
+app.include_router(profile.router, prefix=settings.api_v1_prefix)
+app.include_router(feishu.router, prefix=settings.api_v1_prefix)
+
+
+@app.get("/health")
 
 
 @app.get("/health")

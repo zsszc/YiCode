@@ -1,13 +1,21 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useDashboard } from '@/hooks/useDashboard'
-import { dashboardApi, reviewApi } from '@/services/api'
+import { useQuery } from '@tanstack/react-query'
+import { dashboardApi, reviewApi, profileApi } from '@/services/api'
 import { useQueryClient } from '@tanstack/react-query'
+import { Flame, Sparkles } from 'lucide-react'
 import type { DashboardItem } from '@/types'
 
 export default function DashboardPage() {
   const { data, isLoading, error } = useDashboard()
   const queryClient = useQueryClient()
   const [undoId, setUndoId] = useState<number | null>(null)
+
+  const { data: adaptive } = useQuery({
+    queryKey: ['adaptive'],
+    queryFn: () => profileApi.adaptive(),
+  })
 
   if (isLoading) return <div className="text-journal-muted">加载中...</div>
   if (error) return <div className="text-journal-danger">加载失败</div>
@@ -43,6 +51,25 @@ export default function DashboardPage() {
           <StatBadge label="归档" count={data.counts.archived} color="bg-blue-50 text-blue-600" />
         </div>
       </div>
+
+      {/* AI 自适应建议 + 连续打卡 */}
+      {adaptive && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3">
+            <div className="flex items-center gap-1.5 text-sm font-medium text-orange-800">
+              <Flame size={16} className="text-orange-500" />
+              连续打卡 {adaptive.profile.streak_days} 天
+              {adaptive.profile.streak_days >= 7 && <span className="text-xs">🔥 保持住！</span>}
+            </div>
+          </div>
+          <div className="rounded-lg border border-journal-accentLight/50 bg-journal-accentLight/20 px-4 py-3">
+            <div className="flex items-center gap-1.5 text-sm font-medium text-journal-accent">
+              <Sparkles size={16} />
+              AI 建议：{adaptive.reasoning.split('；')[0]}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 昨日空档提示 */}
       {data.skipped_yesterday && (
@@ -131,9 +158,11 @@ function ProblemCard({
             </span>
             <span className="text-xs text-journal-muted">{item.category}</span>
           </div>
-          <h3 className="mt-1.5 truncate font-hand font-semibold text-journal-ink">
-            #{item.id} {item.title}
-          </h3>
+          <Link to={`/problems/${item.id}`}>
+            <h3 className="mt-1.5 truncate font-hand font-semibold text-journal-ink hover:text-journal-accent transition-colors">
+              #{item.id} {item.title}
+            </h3>
+          </Link>
           {item.next_review && (
             <p className={`mt-1 text-xs ${item.is_overdue ? 'text-red-500 font-medium' : 'text-journal-muted'}`}>
               到期: {item.next_review} {item.is_overdue && '(已逾期)'}
@@ -166,7 +195,7 @@ function ProblemCard({
       )}
 
       {isNew && (
-        <div className="mt-3">
+        <div className="mt-3 flex gap-2">
           <a
             href={`https://leetcode.cn/problems/${item.slug}`}
             target="_blank"
@@ -175,6 +204,12 @@ function ProblemCard({
           >
             去刷题 →
           </a>
+          <Link
+            to={`/problems/${item.id}`}
+            className="inline-flex items-center gap-1 rounded-lg bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100"
+          >
+            AI 辅导
+          </Link>
         </div>
       )}
     </div>
