@@ -1,0 +1,4787 @@
+{
+ "two-sum": {
+  "fn": "twoSum",
+  "sig": "def twoSum(self, nums: List[int], target: int) -> List[int]:",
+  "unord": true,
+  "desc": "给定一个整数数组 `nums` 和一个整数目标值 `target`，请你在该数组中找出**和为目标值** 的那两个整数，并返回它们的数组下标。\n\n你可以假设每种输入只会对应一个答案，并且不能使用两次相同的元素。\n\n**示例 1**\n```\n输入: nums = [2,7,11,15], target = 9\n输出: [0,1]\n解释: nums[0] + nums[1] == 9\n```\n**示例 2**\n```\n输入: nums = [3,2,4], target = 6\n输出: [1,2]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      2,
+      7,
+      11,
+      15
+     ],
+     9
+    ],
+    "expected": [
+     0,
+     1
+    ]
+   },
+   {
+    "args": [
+     [
+      3,
+      2,
+      4
+     ],
+     6
+    ],
+    "expected": [
+     1,
+     2
+    ]
+   },
+   {
+    "args": [
+     [
+      3,
+      3
+     ],
+     6
+    ],
+    "expected": [
+     0,
+     1
+    ]
+   }
+  ]
+ },
+ "group-anagrams": {
+  "fn": "groupAnagrams",
+  "sig": "def groupAnagrams(self, strs: List[str]) -> List[List[str]]:",
+  "unord": true,
+  "desc": "给你一个字符串数组，请你将**字母异位词**（由相同字母重排列得到的字符串）组合在一起，可以按任意顺序返回结果列表。\n\n**示例**\n```\n输入: strs = [\"eat\", \"tea\", \"tan\", \"ate\", \"nat\", \"bat\"]\n输出: [[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      "eat",
+      "tea",
+      "tan",
+      "ate",
+      "nat",
+      "bat"
+     ]
+    ],
+    "expected": [
+     [
+      "bat"
+     ],
+     [
+      "nat",
+      "tan"
+     ],
+     [
+      "ate",
+      "eat",
+      "tea"
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      ""
+     ]
+    ],
+    "expected": [
+     [
+      ""
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      "a"
+     ]
+    ],
+    "expected": [
+     [
+      "a"
+     ]
+    ]
+   }
+  ]
+ },
+ "longest-consecutive-sequence": {
+  "fn": "longestConsecutive",
+  "sig": "def longestConsecutive(self, nums: List[int]) -> int:",
+  "desc": "给定一个未排序的整数数组 `nums`，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。请你设计并实现时间复杂度为 O(n) 的算法。\n\n**示例**\n```\n输入: nums = [100,4,200,1,3,2]\n输出: 4\n解释: 最长连续序列是 [1, 2, 3, 4]，长度为 4\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      100,
+      4,
+      200,
+      1,
+      3,
+      2
+     ]
+    ],
+    "expected": 4
+   },
+   {
+    "args": [
+     [
+      0,
+      3,
+      7,
+      2,
+      5,
+      8,
+      4,
+      6,
+      0,
+      1
+     ]
+    ],
+    "expected": 9
+   },
+   {
+    "args": [
+     []
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ "move-zeroes": {
+  "fn": "moveZeroes",
+  "sig": "def moveZeroes(self, nums: List[int]) -> None:",
+  "inplace": true,
+  "desc": "给定一个数组 `nums`，编写一个函数将所有 `0` 移动到数组的末尾，同时保持非零元素的相对顺序。**必须原地操作**，不要返回任何值，直接修改 `nums`。\n\n**示例**\n```\n输入: nums = [0,1,0,3,12]\n输出: [1,3,12,0,0]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      0,
+      1,
+      0,
+      3,
+      12
+     ]
+    ],
+    "expected": [
+     1,
+     3,
+     12,
+     0,
+     0
+    ]
+   },
+   {
+    "args": [
+     [
+      0
+     ]
+    ],
+    "expected": [
+     0
+    ]
+   },
+   {
+    "args": [
+     [
+      1,
+      0,
+      2,
+      0,
+      3
+     ]
+    ],
+    "expected": [
+     1,
+     2,
+     3,
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ "container-with-most-water": {
+  "fn": "maxArea",
+  "sig": "def maxArea(self, height: List[int]) -> int:",
+  "desc": "给定一个长度为 n 的整数数组 `height`。有 n 条垂线，第 i 条线的两个端点是 `(i, 0)` 和 `(i, height[i])`。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。返回容器可以储存的最大水量。\n\n**示例**\n```\n输入: height = [1,8,6,2,5,4,8,3,7]\n输出: 49\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      8,
+      6,
+      2,
+      5,
+      4,
+      8,
+      3,
+      7
+     ]
+    ],
+    "expected": 49
+   },
+   {
+    "args": [
+     [
+      1,
+      1
+     ]
+    ],
+    "expected": 1
+   },
+   {
+    "args": [
+     [
+      4,
+      3,
+      2,
+      1,
+      4
+     ]
+    ],
+    "expected": 16
+   }
+  ]
+ },
+ "3sum": {
+  "fn": "threeSum",
+  "sig": "def threeSum(self, nums: List[int]) -> List[List[int]]:",
+  "unord": true,
+  "desc": "给你一个整数数组 `nums`，判断是否存在三元组 `[nums[i], nums[j], nums[k]]` 满足 `i != j`、`i != k` 且 `j != k`，同时还满足 `nums[i] + nums[j] + nums[k] == 0`。请你返回所有和为 0 且**不重复**的三元组。\n\n**示例**\n```\n输入: nums = [-1,0,1,2,-1,-4]\n输出: [[-1,-1,2],[-1,0,1]]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      -1,
+      0,
+      1,
+      2,
+      -1,
+      -4
+     ]
+    ],
+    "expected": [
+     [
+      -1,
+      -1,
+      2
+     ],
+     [
+      -1,
+      0,
+      1
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      0,
+      1,
+      1
+     ]
+    ],
+    "expected": []
+   },
+   {
+    "args": [
+     [
+      0,
+      0,
+      0
+     ]
+    ],
+    "expected": [
+     [
+      0,
+      0,
+      0
+     ]
+    ]
+   }
+  ]
+ },
+ "trapping-rain-water": {
+  "fn": "trap",
+  "sig": "def trap(self, height: List[int]) -> int:",
+  "desc": "给定 `n` 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。\n\n**示例**\n```\n输入: height = [0,1,0,2,1,0,1,3,2,1,2,1]\n输出: 6\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      0,
+      1,
+      0,
+      2,
+      1,
+      0,
+      1,
+      3,
+      2,
+      1,
+      2,
+      1
+     ]
+    ],
+    "expected": 6
+   },
+   {
+    "args": [
+     [
+      4,
+      2,
+      0,
+      3,
+      2,
+      5
+     ]
+    ],
+    "expected": 9
+   },
+   {
+    "args": [
+     [
+      4,
+      2,
+      3
+     ]
+    ],
+    "expected": 1
+   }
+  ]
+ },
+ "longest-substring-without-repeating-characters": {
+  "fn": "lengthOfLongestSubstring",
+  "sig": "def lengthOfLongestSubstring(self, s: str) -> int:",
+  "desc": "给定一个字符串 `s`，请你找出其中不含有重复字符的**最长子串**的长度。\n\n**示例**\n```\n输入: s = \"abcabcbb\"\n输出: 3\n解释: 无重复字符的最长子串是 \"abc\"\n```",
+  "tests": [
+   {
+    "args": [
+     "abcabcbb"
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     "bbbbb"
+    ],
+    "expected": 1
+   },
+   {
+    "args": [
+     "pwwkew"
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     ""
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ "find-all-anagrams-in-a-string": {
+  "fn": "findAnagrams",
+  "sig": "def findAnagrams(self, s: str, p: str) -> List[int]:",
+  "desc": "给定两个字符串 `s` 和 `p`，找到 `s` 中所有 `p` 的**异位词**的子串，返回这些子串的起始索引。不考虑答案输出的顺序。\n\n**示例**\n```\n输入: s = \"cbaebabacd\", p = \"abc\"\n输出: [0,6]\n```",
+  "tests": [
+   {
+    "args": [
+     "cbaebabacd",
+     "abc"
+    ],
+    "expected": [
+     0,
+     6
+    ]
+   },
+   {
+    "args": [
+     "abab",
+     "ab"
+    ],
+    "expected": [
+     0,
+     1,
+     2
+    ]
+   }
+  ]
+ },
+ "subarray-sum-equals-k": {
+  "fn": "subarraySum",
+  "sig": "def subarraySum(self, nums: List[int], k: int) -> int:",
+  "desc": "给你一个整数数组 `nums` 和一个整数 `k`，请你统计并返回该数组中和为 `k` 的**连续子数组**的个数。\n\n**示例**\n```\n输入: nums = [1,1,1], k = 2\n输出: 2\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      1,
+      1
+     ],
+     2
+    ],
+    "expected": 2
+   },
+   {
+    "args": [
+     [
+      1,
+      2,
+      3
+     ],
+     3
+    ],
+    "expected": 2
+   },
+   {
+    "args": [
+     [
+      1,
+      -1,
+      0
+     ],
+     0
+    ],
+    "expected": 3
+   }
+  ]
+ },
+ "sliding-window-maximum": {
+  "fn": "maxSlidingWindow",
+  "sig": "def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:",
+  "desc": "给你一个整数数组 `nums`，有一个大小为 `k` 的滑动窗口从数组的最左侧移动到最右侧。你只可以看到在滑动窗口内的 `k` 个数字。滑动窗口每次只向右移动一位。返回滑动窗口中的最大值序列。\n\n**示例**\n```\n输入: nums = [1,3,-1,-3,5,3,6,7], k = 3\n输出: [3,3,5,5,6,7]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      3,
+      -1,
+      -3,
+      5,
+      3,
+      6,
+      7
+     ],
+     3
+    ],
+    "expected": [
+     3,
+     3,
+     5,
+     5,
+     6,
+     7
+    ]
+   },
+   {
+    "args": [
+     [
+      1
+     ],
+     1
+    ],
+    "expected": [
+     1
+    ]
+   },
+   {
+    "args": [
+     [
+      1,
+      -1
+     ],
+     1
+    ],
+    "expected": [
+     1,
+     -1
+    ]
+   }
+  ]
+ },
+ "minimum-window-substring": {
+  "fn": "minWindow",
+  "sig": "def minWindow(self, s: str, t: str) -> str:",
+  "desc": "给你一个字符串 `s`、一个字符串 `t`。返回 `s` 中涵盖 `t` 所有字符的最小子串。如果 `s` 中不存在这样的子串，则返回空字符串 `\"\"`。\n\n**示例**\n```\n输入: s = \"ADOBECODEBANC\", t = \"ABC\"\n输出: \"BANC\"\n```",
+  "tests": [
+   {
+    "args": [
+     "ADOBECODEBANC",
+     "ABC"
+    ],
+    "expected": "BANC"
+   },
+   {
+    "args": [
+     "a",
+     "a"
+    ],
+    "expected": "a"
+   },
+   {
+    "args": [
+     "a",
+     "aa"
+    ],
+    "expected": ""
+   }
+  ]
+ },
+ "maximum-subarray": {
+  "fn": "maxSubArray",
+  "sig": "def maxSubArray(self, nums: List[int]) -> int:",
+  "desc": "给你一个整数数组 `nums`，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。\n\n**示例**\n```\n输入: nums = [-2,1,-3,4,-1,2,1,-5,4]\n输出: 6\n解释: 连续子数组 [4,-1,2,1] 的和最大为 6\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      -2,
+      1,
+      -3,
+      4,
+      -1,
+      2,
+      1,
+      -5,
+      4
+     ]
+    ],
+    "expected": 6
+   },
+   {
+    "args": [
+     [
+      1
+     ]
+    ],
+    "expected": 1
+   },
+   {
+    "args": [
+     [
+      5,
+      4,
+      -1,
+      7,
+      8
+     ]
+    ],
+    "expected": 23
+   }
+  ]
+ },
+ "merge-intervals": {
+  "fn": "merge",
+  "sig": "def merge(self, intervals: List[List[int]]) -> List[List[int]]:",
+  "desc": "以数组 `intervals` 表示若干个区间的集合，其中单个区间为 `intervals[i] = [starti, endi]`。请你合并所有重叠的区间，并返回一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间。\n\n**示例**\n```\n输入: intervals = [[1,3],[2,6],[8,10],[15,18]]\n输出: [[1,6],[8,10],[15,18]]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      [
+       1,
+       3
+      ],
+      [
+       2,
+       6
+      ],
+      [
+       8,
+       10
+      ],
+      [
+       15,
+       18
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      1,
+      6
+     ],
+     [
+      8,
+      10
+     ],
+     [
+      15,
+      18
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      [
+       1,
+       4
+      ],
+      [
+       4,
+       5
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      1,
+      5
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      [
+       1,
+       4
+      ],
+      [
+       0,
+       4
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      0,
+      4
+     ]
+    ]
+   }
+  ]
+ },
+ "rotate-array": {
+  "fn": "rotate",
+  "sig": "def rotate(self, nums: List[int], k: int) -> None:",
+  "inplace": true,
+  "desc": "给定一个整数数组 `nums`，将数组中的元素向右轮转 `k` 个位置，其中 `k` 是非负数。**请原地修改数组**，不要返回值。\n\n**示例**\n```\n输入: nums = [1,2,3,4,5,6,7], k = 3\n输出: [5,6,7,1,2,3,4]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     3
+    ],
+    "expected": [
+     5,
+     6,
+     7,
+     1,
+     2,
+     3,
+     4
+    ]
+   },
+   {
+    "args": [
+     [
+      -1,
+      -100,
+      3,
+      99
+     ],
+     2
+    ],
+    "expected": [
+     3,
+     99,
+     -1,
+     -100
+    ]
+   },
+   {
+    "args": [
+     [
+      1,
+      2
+     ],
+     3
+    ],
+    "expected": [
+     2,
+     1
+    ]
+   }
+  ]
+ },
+ "product-of-array-except-self": {
+  "fn": "productExceptSelf",
+  "sig": "def productExceptSelf(self, nums: List[int]) -> List[int]:",
+  "desc": "给你一个整数数组 `nums`，返回数组 `answer`，其中 `answer[i]` 等于 `nums` 中除 `nums[i]` 之外其余各元素的乘积。请**不要使用除法**，且在 O(n) 时间复杂度内完成。\n\n**示例**\n```\n输入: nums = [1,2,3,4]\n输出: [24,12,8,6]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      2,
+      3,
+      4
+     ]
+    ],
+    "expected": [
+     24,
+     12,
+     8,
+     6
+    ]
+   },
+   {
+    "args": [
+     [
+      -1,
+      1,
+      0,
+      -3,
+      3
+     ]
+    ],
+    "expected": [
+     0,
+     0,
+     9,
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ "first-missing-positive": {
+  "fn": "firstMissingPositive",
+  "sig": "def firstMissingPositive(self, nums: List[int]) -> int:",
+  "desc": "给你一个未排序的整数数组 `nums`，请你找出其中没有出现的最小的正整数。请你实现时间复杂度为 O(n) 并且只使用常数级别额外空间的解决方案。\n\n**示例**\n```\n输入: nums = [3,4,-1,1]\n输出: 2\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      2,
+      0
+     ]
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     [
+      3,
+      4,
+      -1,
+      1
+     ]
+    ],
+    "expected": 2
+   },
+   {
+    "args": [
+     [
+      7,
+      8,
+      9,
+      11,
+      12
+     ]
+    ],
+    "expected": 1
+   }
+  ]
+ },
+ "set-matrix-zeroes": {
+  "fn": "setZeroes",
+  "sig": "def setZeroes(self, matrix: List[List[int]]) -> None:",
+  "inplace": true,
+  "desc": "给定一个 `m x n` 的矩阵，如果一个元素为 0，则将其所在行和列的所有元素都设为 0。请使用**原地**算法，直接修改 `matrix`，不要返回值。\n\n**示例**\n```\n输入: matrix = [[1,1,1],[1,0,1],[1,1,1]]\n输出: [[1,0,1],[0,0,0],[1,0,1]]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      [
+       1,
+       1,
+       1
+      ],
+      [
+       1,
+       0,
+       1
+      ],
+      [
+       1,
+       1,
+       1
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      1,
+      0,
+      1
+     ],
+     [
+      0,
+      0,
+      0
+     ],
+     [
+      1,
+      0,
+      1
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      [
+       0,
+       1,
+       2,
+       0
+      ],
+      [
+       3,
+       4,
+       5,
+       2
+      ],
+      [
+       1,
+       3,
+       1,
+       5
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      0,
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      4,
+      5,
+      0
+     ],
+     [
+      0,
+      3,
+      1,
+      0
+     ]
+    ]
+   }
+  ]
+ },
+ "spiral-matrix": {
+  "fn": "spiralOrder",
+  "sig": "def spiralOrder(self, matrix: List[List[int]]) -> List[int]:",
+  "desc": "给你一个 `m` 行 `n` 列的矩阵 `matrix`，请按照**顺时针螺旋顺序**，返回矩阵中的所有元素。\n\n**示例**\n```\n输入: matrix = [[1,2,3],[4,5,6],[7,8,9]]\n输出: [1,2,3,6,9,8,7,4,5]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       4,
+       5,
+       6
+      ],
+      [
+       7,
+       8,
+       9
+      ]
+     ]
+    ],
+    "expected": [
+     1,
+     2,
+     3,
+     6,
+     9,
+     8,
+     7,
+     4,
+     5
+    ]
+   },
+   {
+    "args": [
+     [
+      [
+       1,
+       2,
+       3,
+       4
+      ],
+      [
+       5,
+       6,
+       7,
+       8
+      ],
+      [
+       9,
+       10,
+       11,
+       12
+      ]
+     ]
+    ],
+    "expected": [
+     1,
+     2,
+     3,
+     4,
+     8,
+     12,
+     11,
+     10,
+     9,
+     5,
+     6,
+     7
+    ]
+   }
+  ]
+ },
+ "rotate-image": {
+  "fn": "rotate",
+  "sig": "def rotate(self, matrix: List[List[int]]) -> None:",
+  "inplace": true,
+  "desc": "给定一个 `n × n` 的二维矩阵 `matrix` 表示一个图像。请你将图像**顺时针旋转 90 度**。你必须**原地**旋转图像，直接修改输入的二维矩阵，不要返回值。\n\n**示例**\n```\n输入: matrix = [[1,2,3],[4,5,6],[7,8,9]]\n输出: [[7,4,1],[8,5,2],[9,6,3]]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       4,
+       5,
+       6
+      ],
+      [
+       7,
+       8,
+       9
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      7,
+      4,
+      1
+     ],
+     [
+      8,
+      5,
+      2
+     ],
+     [
+      9,
+      6,
+      3
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      [
+       5,
+       1,
+       9,
+       11
+      ],
+      [
+       2,
+       4,
+       8,
+       10
+      ],
+      [
+       13,
+       3,
+       6,
+       7
+      ],
+      [
+       15,
+       14,
+       12,
+       16
+      ]
+     ]
+    ],
+    "expected": [
+     [
+      15,
+      13,
+      2,
+      5
+     ],
+     [
+      14,
+      3,
+      4,
+      1
+     ],
+     [
+      12,
+      6,
+      8,
+      9
+     ],
+     [
+      16,
+      7,
+      10,
+      11
+     ]
+    ]
+   }
+  ]
+ },
+ "search-a-2d-matrix-ii": {
+  "fn": "searchMatrix",
+  "sig": "def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:",
+  "desc": "编写一个高效的算法来搜索 `m x n` 矩阵 `matrix` 中的一个目标值 `target`。该矩阵具有以下特性：每行的元素从左到右升序排列；每列的元素从上到下升序排列。\n\n**示例**\n```\n输入: matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      [
+       1,
+       4,
+       7,
+       11,
+       15
+      ],
+      [
+       2,
+       5,
+       8,
+       12,
+       19
+      ],
+      [
+       3,
+       6,
+       9,
+       16,
+       22
+      ],
+      [
+       10,
+       13,
+       14,
+       17,
+       24
+      ],
+      [
+       18,
+       21,
+       23,
+       26,
+       30
+      ]
+     ],
+     5
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     [
+      [
+       1,
+       4,
+       7,
+       11,
+       15
+      ],
+      [
+       2,
+       5,
+       8,
+       12,
+       19
+      ],
+      [
+       3,
+       6,
+       9,
+       16,
+       22
+      ],
+      [
+       10,
+       13,
+       14,
+       17,
+       24
+      ],
+      [
+       18,
+       21,
+       23,
+       26,
+       30
+      ]
+     ],
+     20
+    ],
+    "expected": false
+   }
+  ]
+ },
+ "intersection-of-two-linked-lists": {
+  "fn": "getIntersectionNode",
+  "sig": "def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> Optional[ListNode]:",
+  "kind": "linked",
+  "desc": "给你两个单链表的头节点 `headA` 和 `headB`，请你找出并返回两个单链表相交的起始节点。如果两个链表不存在相交节点，返回 `null`。输入中 `listA`/`listB` 为两条链表的值，`skipA`/`skipB` 表示相交点在各自链表中的下标，相交部分节点相同。\n\n**示例**\n```\n输入: listA = [4,1,8,4,5], listB = [5,6,1,8,4,5], skipA = 2, skipB = 3\n输出: 相交于值 8 的节点（即从相交点开始为 [8,4,5]）\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "ilistA": [
+       4,
+       1,
+       8,
+       4,
+       5
+      ],
+      "ilistB": [
+       5,
+       6,
+       1,
+       8,
+       4,
+       5
+      ],
+      "skipA": 2,
+      "skipB": 3
+     }
+    ],
+    "expected": {
+     "list": [
+      8,
+      4,
+      5
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "ilistA": [
+       1,
+       9,
+       1,
+       2,
+       4
+      ],
+      "ilistB": [
+       3,
+       2,
+       4
+      ],
+      "skipA": 3,
+      "skipB": 1
+     }
+    ],
+    "expected": {
+     "list": [
+      2,
+      4
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "ilistA": [
+       2,
+       6,
+       4
+      ],
+      "ilistB": [
+       1,
+       5
+      ],
+      "skipA": 3,
+      "skipB": 2
+     }
+    ],
+    "expected": {
+     "list": null
+    }
+   }
+  ]
+ },
+ "reverse-linked-list": {
+  "fn": "reverseList",
+  "sig": "def reverseList(self, head: Optional[ListNode]) -> Optional[ListNode]:",
+  "kind": "linked",
+  "desc": "给你单链表的头节点 `head`，请你反转链表，并返回反转后的链表。\n\n**示例**\n```\n输入: head = [1,2,3,4,5]\n输出: [5,4,3,2,1]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "list": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      5,
+      4,
+      3,
+      2,
+      1
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "list": [
+       1,
+       2
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      2,
+      1
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "list": []
+     }
+    ],
+    "expected": {
+     "list": []
+    }
+   }
+  ]
+ },
+ "palindrome-linked-list": {
+  "fn": "isPalindrome",
+  "sig": "def isPalindrome(self, head: Optional[ListNode]) -> bool:",
+  "kind": "linked",
+  "desc": "给你一个单链表的头节点 `head`，请你判断该链表是否为回文链表。如果是，返回 `true`；否则，返回 `false`。\n\n**示例**\n```\n输入: head = [1,2,2,1]\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "list": [
+       1,
+       2,
+       2,
+       1
+      ]
+     }
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     {
+      "list": [
+       1,
+       2
+      ]
+     }
+    ],
+    "expected": false
+   },
+   {
+    "args": [
+     {
+      "list": [
+       1
+      ]
+     }
+    ],
+    "expected": true
+   }
+  ]
+ },
+ "linked-list-cycle": {
+  "fn": "hasCycle",
+  "sig": "def hasCycle(self, head: Optional[ListNode]) -> bool:",
+  "kind": "linked",
+  "desc": "给你一个链表的头节点 `head`，判断链表中是否有环。`pos` 表示尾节点连接到链表中位置（索引从 0 开始），`pos` 为 -1 表示无环。\n\n**示例**\n```\n输入: head = [3,2,0,-4], pos = 1\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "clist": [
+       3,
+       2,
+       0,
+       -4
+      ],
+      "pos": 1
+     }
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     {
+      "clist": [
+       1,
+       2
+      ],
+      "pos": 0
+     }
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     {
+      "clist": [
+       1
+      ],
+      "pos": -1
+     }
+    ],
+    "expected": false
+   }
+  ]
+ },
+ "linked-list-cycle-ii": {
+  "fn": "detectCycle",
+  "sig": "def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:",
+  "kind": "linked",
+  "desc": "给定一个链表的头节点 `head`，返回链表开始入环的第一个节点。如果链表无环，则返回 `null`。`pos` 表示尾节点连接到的位置，-1 表示无环。判题时会校验你返回的节点是否为入环点。\n\n**示例**\n```\n输入: head = [3,2,0,-4], pos = 1\n输出: 返回索引为 1 的节点\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "clist": [
+       3,
+       2,
+       0,
+       -4
+      ],
+      "pos": 1
+     }
+    ],
+    "expected": {
+     "cpos": 1
+    }
+   },
+   {
+    "args": [
+     {
+      "clist": [
+       1,
+       2
+      ],
+      "pos": 0
+     }
+    ],
+    "expected": {
+     "cpos": 0
+    }
+   },
+   {
+    "args": [
+     {
+      "clist": [
+       1
+      ],
+      "pos": -1
+     }
+    ],
+    "expected": {
+     "cpos": -1
+    }
+   }
+  ]
+ },
+ "merge-two-sorted-lists": {
+  "fn": "mergeTwoLists",
+  "sig": "def mergeTwoLists(self, list1: Optional[ListNode], list2: Optional[ListNode]) -> Optional[ListNode]:",
+  "kind": "linked",
+  "desc": "将两个升序链表合并为一个新的**升序**链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。\n\n**示例**\n```\n输入: list1 = [1,2,4], list2 = [1,3,4]\n输出: [1,1,2,3,4,4]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "list": [
+       1,
+       2,
+       4
+      ]
+     },
+     {
+      "list": [
+       1,
+       3,
+       4
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      1,
+      1,
+      2,
+      3,
+      4,
+      4
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "list": []
+     },
+     {
+      "list": []
+     }
+    ],
+    "expected": {
+     "list": []
+    }
+   },
+   {
+    "args": [
+     {
+      "list": []
+     },
+     {
+      "list": [
+       0
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      0
+     ]
+    }
+   }
+  ]
+ },
+ "add-two-numbers": {
+  "fn": "addTwoNumbers",
+  "sig": "def addTwoNumbers(self, l1: Optional[ListNode], l2: Optional[ListNode]) -> Optional[ListNode]:",
+  "kind": "linked",
+  "desc": "给你两个**非空**的链表，表示两个非负的整数。它们每位数字都是按照**逆序**的方式存储的，并且每个节点只能存储一位数字。请你将两个数相加，并以相同形式返回一个表示和的链表。\n\n**示例**\n```\n输入: l1 = [2,4,3], l2 = [5,6,4]\n输出: [7,0,8]\n解释: 342 + 465 = 807\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "list": [
+       2,
+       4,
+       3
+      ]
+     },
+     {
+      "list": [
+       5,
+       6,
+       4
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      7,
+      0,
+      8
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "list": [
+       0
+      ]
+     },
+     {
+      "list": [
+       0
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      0
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "list": [
+       9,
+       9,
+       9,
+       9,
+       9,
+       9,
+       9
+      ]
+     },
+     {
+      "list": [
+       9,
+       9,
+       9,
+       9
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      8,
+      9,
+      9,
+      9,
+      0,
+      0,
+      0,
+      1
+     ]
+    }
+   }
+  ]
+ },
+ "remove-nth-node-from-end-of-list": {
+  "fn": "removeNthFromEnd",
+  "sig": "def removeNthFromEnd(self, head: Optional[ListNode], n: int) -> Optional[ListNode]:",
+  "kind": "linked",
+  "desc": "给你一个链表，删除链表的倒数第 `n` 个结点，并且返回链表的头结点。\n\n**示例**\n```\n输入: head = [1,2,3,4,5], n = 2\n输出: [1,2,3,5]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "list": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     },
+     2
+    ],
+    "expected": {
+     "list": [
+      1,
+      2,
+      3,
+      5
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "list": [
+       1
+      ]
+     },
+     1
+    ],
+    "expected": {
+     "list": []
+    }
+   },
+   {
+    "args": [
+     {
+      "list": [
+       1,
+       2
+      ]
+     },
+     1
+    ],
+    "expected": {
+     "list": [
+      1
+     ]
+    }
+   }
+  ]
+ },
+ "swap-nodes-in-pairs": {
+  "fn": "swapPairs",
+  "sig": "def swapPairs(self, head: Optional[ListNode]) -> Optional[ListNode]:",
+  "kind": "linked",
+  "desc": "给你一个链表，两两交换其中相邻的节点，并返回交换后链表的头节点。你必须在不修改节点内部的值的情况下完成本题（即，只能进行节点交换）。\n\n**示例**\n```\n输入: head = [1,2,3,4]\n输出: [2,1,4,3]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "list": [
+       1,
+       2,
+       3,
+       4
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      2,
+      1,
+      4,
+      3
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "list": []
+     }
+    ],
+    "expected": {
+     "list": []
+    }
+   },
+   {
+    "args": [
+     {
+      "list": [
+       1
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      1
+     ]
+    }
+   }
+  ]
+ },
+ "reverse-nodes-in-k-group": {
+  "fn": "reverseKGroup",
+  "sig": "def reverseKGroup(self, head: Optional[ListNode], k: int) -> Optional[ListNode]:",
+  "kind": "linked",
+  "desc": "给你链表的头节点 `head`，每 `k` 个节点一组进行翻转，请你返回修改后的链表。如果节点总数不是 `k` 的整数倍，那么请将最后剩余的节点保持原有顺序。\n\n**示例**\n```\n输入: head = [1,2,3,4,5], k = 2\n输出: [2,1,4,3,5]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "list": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     },
+     2
+    ],
+    "expected": {
+     "list": [
+      2,
+      1,
+      4,
+      3,
+      5
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "list": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     },
+     3
+    ],
+    "expected": {
+     "list": [
+      3,
+      2,
+      1,
+      4,
+      5
+     ]
+    }
+   }
+  ]
+ },
+ "copy-list-with-random-pointer": {
+  "fn": "copyRandomList",
+  "sig": "def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':",
+  "kind": "linked",
+  "desc": "给你一个长度为 `n` 的链表，每个节点包含一个额外增加的随机指针 `random`，该指针可以指向链表中的任何节点或空节点。构造这个链表的**深拷贝**。\n\n> ⚠️ 本题涉及随机指针结构，暂不支持自动判题。你可以在右侧编辑器中自由运行调试代码，或请 AI Tutor 帮你分析思路。",
+  "tests": []
+ },
+ "sort-list": {
+  "fn": "sortList",
+  "sig": "def sortList(self, head: Optional[ListNode]) -> Optional[ListNode]:",
+  "kind": "linked",
+  "desc": "给你链表的头结点 `head`，请将其按**升序**排列并返回排序后的链表。进阶：你可以在 O(n log n) 时间复杂度和常数级空间复杂度下完成吗？\n\n**示例**\n```\n输入: head = [4,2,1,3]\n输出: [1,2,3,4]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "list": [
+       4,
+       2,
+       1,
+       3
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      1,
+      2,
+      3,
+      4
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "list": [
+       -1,
+       5,
+       3,
+       4,
+       0
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      -1,
+      0,
+      3,
+      4,
+      5
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "list": []
+     }
+    ],
+    "expected": {
+     "list": []
+    }
+   }
+  ]
+ },
+ "merge-k-sorted-lists": {
+  "fn": "mergeKLists",
+  "sig": "def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:",
+  "kind": "linked",
+  "desc": "给你一个链表数组，每个链表都已经按升序排列。请你将所有链表合并到一个升序链表中，返回合并后的链表。\n\n**示例**\n```\n输入: lists = [[1,4,5],[1,3,4],[2,6]]\n输出: [1,1,2,3,4,4,5,6]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "lists": [
+       [
+        1,
+        4,
+        5
+       ],
+       [
+        1,
+        3,
+        4
+       ],
+       [
+        2,
+        6
+       ]
+      ]
+     }
+    ],
+    "expected": {
+     "list": [
+      1,
+      1,
+      2,
+      3,
+      4,
+      4,
+      5,
+      6
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "lists": []
+     }
+    ],
+    "expected": {
+     "list": []
+    }
+   },
+   {
+    "args": [
+     {
+      "lists": [
+       []
+      ]
+     }
+    ],
+    "expected": {
+     "list": []
+    }
+   }
+  ]
+ },
+ "lru-cache": {
+  "fn": "LRUCache",
+  "kind": "design",
+  "sig": "class LRUCache:\n    def __init__(self, capacity: int):\n        pass\n\n    def get(self, key: int) -> int:\n        pass\n\n    def put(self, key: int, value: int) -> None:\n        pass",
+  "design": {
+   "cls": "LRUCache",
+   "init": [
+    2
+   ]
+  },
+  "desc": "请你设计并实现一个满足 **LRU（最近最少使用）**缓存约束的数据结构。实现 `LRUCache` 类：\n\n- `LRUCache(capacity)` 以正整数容量 `capacity` 初始化 LRU 缓存\n- `get(key)` 如果关键字 `key` 存在于缓存中，则返回关键字的值，否则返回 `-1`\n- `put(key, value)` 如果关键字 `key` 已经存在，则变更其数据值 `value`；如果不存在，则向缓存中插入该组 `key-value`。如果插入操作导致关键字数量超过 `capacity`，则应该**逐出**最久未使用的关键字\n\n函数 `get` 和 `put` 必须以 O(1) 的平均时间复杂度运行。判题将按下方操作序列依次调用你的类。\n\n**示例**\n```\n输入: [\"LRUCache\", \"put\", \"put\", \"get\", \"put\", \"get\", \"put\", \"get\", \"get\", \"get\"]\n     [[2], [1, 1], [2, 2], [1], [3, 3], [2], [4, 4], [1], [3], [4]]\n输出: [null, null, null, 1, null, -1, null, -1, 3, 4]\n```",
+  "tests": [
+   {
+    "ops": [
+     "put",
+     "put",
+     "get",
+     "put",
+     "get",
+     "put",
+     "get",
+     "get",
+     "get"
+    ],
+    "opargs": [
+     [
+      1,
+      1
+     ],
+     [
+      2,
+      2
+     ],
+     [
+      1
+     ],
+     [
+      3,
+      3
+     ],
+     [
+      2
+     ],
+     [
+      4,
+      4
+     ],
+     [
+      1
+     ],
+     [
+      3
+     ],
+     [
+      4
+     ]
+    ],
+    "expected": [
+     null,
+     null,
+     1,
+     null,
+     -1,
+     null,
+     -1,
+     3,
+     4
+    ]
+   }
+  ]
+ },
+ "binary-tree-inorder-traversal": {
+  "fn": "inorderTraversal",
+  "sig": "def inorderTraversal(self, root: Optional[TreeNode]) -> List[int]:",
+  "kind": "tree",
+  "desc": "给定一个二叉树的根节点 `root`，返回它的**中序**遍历。树以层序数组表示，`null` 表示空节点。\n\n**示例**\n```\n输入: root = [1,null,2,3]\n输出: [1,3,2]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       null,
+       2,
+       3
+      ]
+     }
+    ],
+    "expected": [
+     1,
+     3,
+     2
+    ]
+   },
+   {
+    "args": [
+     {
+      "tree": []
+     }
+    ],
+    "expected": []
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       1
+      ]
+     }
+    ],
+    "expected": [
+     1
+    ]
+   }
+  ]
+ },
+ "maximum-depth-of-binary-tree": {
+  "fn": "maxDepth",
+  "sig": "def maxDepth(self, root: Optional[TreeNode]) -> int:",
+  "kind": "tree",
+  "desc": "给定一个二叉树 `root`，返回其最大深度。二叉树的最大深度是指从根节点到最远叶子节点的最长路径上的节点数。\n\n**示例**\n```\n输入: root = [3,9,20,null,null,15,7]\n输出: 3\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       3,
+       9,
+       20,
+       null,
+       null,
+       15,
+       7
+      ]
+     }
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       null,
+       2
+      ]
+     }
+    ],
+    "expected": 2
+   },
+   {
+    "args": [
+     {
+      "tree": []
+     }
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ "invert-binary-tree": {
+  "fn": "invertTree",
+  "sig": "def invertTree(self, root: Optional[TreeNode]) -> Optional[TreeNode]:",
+  "kind": "tree",
+  "desc": "给你一棵二叉树的根节点 `root`，翻转这棵二叉树（交换每个节点的左右子树），并返回其根节点。\n\n**示例**\n```\n输入: root = [4,2,7,1,3,6,9]\n输出: [4,7,2,9,6,3,1]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       4,
+       2,
+       7,
+       1,
+       3,
+       6,
+       9
+      ]
+     }
+    ],
+    "expected": {
+     "tree": [
+      4,
+      7,
+      2,
+      9,
+      6,
+      3,
+      1
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       2,
+       1,
+       3
+      ]
+     }
+    ],
+    "expected": {
+     "tree": [
+      2,
+      3,
+      1
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "tree": []
+     }
+    ],
+    "expected": {
+     "tree": []
+    }
+   }
+  ]
+ },
+ "symmetric-tree": {
+  "fn": "isSymmetric",
+  "sig": "def isSymmetric(self, root: Optional[TreeNode]) -> bool:",
+  "kind": "tree",
+  "desc": "给你一个二叉树的根节点 `root`，检查它是否轴对称。\n\n**示例**\n```\n输入: root = [1,2,2,3,4,4,3]\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       2,
+       2,
+       3,
+       4,
+       4,
+       3
+      ]
+     }
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       2,
+       2,
+       null,
+       3,
+       null,
+       3
+      ]
+     }
+    ],
+    "expected": false
+   }
+  ]
+ },
+ "diameter-of-binary-tree": {
+  "fn": "diameterOfBinaryTree",
+  "sig": "def diameterOfBinaryTree(self, root: Optional[TreeNode]) -> int:",
+  "kind": "tree",
+  "desc": "给定一棵二叉树，你需要计算它的直径长度。一棵二叉树的直径长度是任意两个结点路径长度中的最大值，这条路径可能穿过也可能不穿过根结点。\n\n**示例**\n```\n输入: root = [1,2,3,4,5]\n输出: 3\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       2,
+       3,
+       4,
+       5
+      ]
+     }
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       2
+      ]
+     }
+    ],
+    "expected": 1
+   }
+  ]
+ },
+ "binary-tree-level-order-traversal": {
+  "fn": "levelOrder",
+  "sig": "def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:",
+  "kind": "tree",
+  "desc": "给你二叉树的根节点 `root`，返回其节点值的**层序遍历**（即逐层地、从左到右访问所有节点）。\n\n**示例**\n```\n输入: root = [3,9,20,null,null,15,7]\n输出: [[3],[9,20],[15,7]]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       3,
+       9,
+       20,
+       null,
+       null,
+       15,
+       7
+      ]
+     }
+    ],
+    "expected": [
+     [
+      3
+     ],
+     [
+      9,
+      20
+     ],
+     [
+      15,
+      7
+     ]
+    ]
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       1
+      ]
+     }
+    ],
+    "expected": [
+     [
+      1
+     ]
+    ]
+   },
+   {
+    "args": [
+     {
+      "tree": []
+     }
+    ],
+    "expected": []
+   }
+  ]
+ },
+ "convert-sorted-array-to-binary-search-tree": {
+  "fn": "sortedArrayToBST",
+  "sig": "def sortedArrayToBST(self, nums: List[int]) -> Optional[TreeNode]:",
+  "kind": "tree",
+  "desc": "给你一个整数数组 `nums`，其中元素已经按**升序**排列，请你将其转换为一棵**高度平衡**二叉搜索树。\n\n> ⚠️ 合法答案可能不唯一，判题按标准中点构造法校验；若你的答案同样平衡但结构不同，可能被误判。\n\n**示例**\n```\n输入: nums = [-10,-3,0,5,9]\n输出: [0,-3,9,-10,null,5]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      -10,
+      -3,
+      0,
+      5,
+      9
+     ]
+    ],
+    "expected": {
+     "tree": [
+      0,
+      -3,
+      9,
+      -10,
+      null,
+      5
+     ]
+    }
+   },
+   {
+    "args": [
+     [
+      1,
+      3
+     ]
+    ],
+    "expected": {
+     "tree": [
+      3,
+      1
+     ]
+    }
+   }
+  ]
+ },
+ "validate-binary-search-tree": {
+  "fn": "isValidBST",
+  "sig": "def isValidBST(self, root: Optional[TreeNode]) -> bool:",
+  "kind": "tree",
+  "desc": "给你一个二叉树的根节点 `root`，判断其是否是一个有效的二叉搜索树。\n\n**示例**\n```\n输入: root = [2,1,3]\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       2,
+       1,
+       3
+      ]
+     }
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       5,
+       1,
+       4,
+       null,
+       null,
+       3,
+       6
+      ]
+     }
+    ],
+    "expected": false
+   }
+  ]
+ },
+ "kth-smallest-element-in-a-bst": {
+  "fn": "kthSmallest",
+  "sig": "def kthSmallest(self, root: Optional[TreeNode], k: int) -> int:",
+  "kind": "tree",
+  "desc": "给定一个二叉搜索树的根节点 `root`，和一个整数 `k`，请你设计一个算法查找其中第 `k` 小的元素（从 1 开始计数）。\n\n**示例**\n```\n输入: root = [3,1,4,null,2], k = 1\n输出: 1\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       3,
+       1,
+       4,
+       null,
+       2
+      ]
+     },
+     1
+    ],
+    "expected": 1
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       5,
+       3,
+       6,
+       2,
+       4,
+       null,
+       null,
+       1
+      ]
+     },
+     3
+    ],
+    "expected": 3
+   }
+  ]
+ },
+ "binary-tree-right-side-view": {
+  "fn": "rightSideView",
+  "sig": "def rightSideView(self, root: Optional[TreeNode]) -> List[int]:",
+  "kind": "tree",
+  "desc": "给定一个二叉树的根节点 `root`，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。\n\n**示例**\n```\n输入: root = [1,2,3,null,5,null,4]\n输出: [1,3,4]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       2,
+       3,
+       null,
+       5,
+       null,
+       4
+      ]
+     }
+    ],
+    "expected": [
+     1,
+     3,
+     4
+    ]
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       null,
+       3
+      ]
+     }
+    ],
+    "expected": [
+     1,
+     3
+    ]
+   },
+   {
+    "args": [
+     {
+      "tree": []
+     }
+    ],
+    "expected": []
+   }
+  ]
+ },
+ "flatten-binary-tree-to-linked-list": {
+  "fn": "flatten",
+  "sig": "def flatten(self, root: Optional[TreeNode]) -> None:",
+  "kind": "tree",
+  "inplace": true,
+  "desc": "给你二叉树的根结点 `root`，请你将它展开为一个单链表：展开后的单链表应该同样使用 `TreeNode`，其中 `right` 子指针指向链表中下一个结点，而左子指针始终为 `null`；展开后的单链表应该与二叉树**先序遍历**顺序相同。**原地修改**，不要返回值。\n\n**示例**\n```\n输入: root = [1,2,5,3,4,null,6]\n输出: [1,null,2,null,3,null,4,null,5,null,6]\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       2,
+       5,
+       3,
+       4,
+       null,
+       6
+      ]
+     }
+    ],
+    "expected": {
+     "tree": [
+      1,
+      null,
+      2,
+      null,
+      3,
+      null,
+      4,
+      null,
+      5,
+      null,
+      6
+     ]
+    }
+   },
+   {
+    "args": [
+     {
+      "tree": []
+     }
+    ],
+    "expected": {
+     "tree": []
+    }
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       0
+      ]
+     }
+    ],
+    "expected": {
+     "tree": [
+      0
+     ]
+    }
+   }
+  ]
+ },
+ "construct-binary-tree-from-preorder-and-inorder-traversal": {
+  "fn": "buildTree",
+  "sig": "def buildTree(self, preorder: List[int], inorder: List[int]) -> Optional[TreeNode]:",
+  "kind": "tree",
+  "desc": "给定两个整数数组 `preorder` 和 `inorder`，其中 `preorder` 是二叉树的先序遍历，`inorder` 是同一棵树的中序遍历，请构造二叉树并返回其根节点。\n\n**示例**\n```\n输入: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]\n输出: [3,9,20,null,null,15,7]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      3,
+      9,
+      20,
+      15,
+      7
+     ],
+     [
+      9,
+      3,
+      15,
+      20,
+      7
+     ]
+    ],
+    "expected": {
+     "tree": [
+      3,
+      9,
+      20,
+      null,
+      null,
+      15,
+      7
+     ]
+    }
+   },
+   {
+    "args": [
+     [
+      -1
+     ],
+     [
+      -1
+     ]
+    ],
+    "expected": {
+     "tree": [
+      -1
+     ]
+    }
+   }
+  ]
+ },
+ "path-sum-iii": {
+  "fn": "pathSum",
+  "sig": "def pathSum(self, root: Optional[TreeNode], targetSum: int) -> int:",
+  "kind": "tree",
+  "desc": "给定一个二叉树的根节点 `root` 和一个整数 `targetSum`，求该二叉树里节点值之和等于 `targetSum` 的**路径**的数目。路径不需要从根节点开始，也不需要在叶子节点结束，但是路径方向必须是向下的（只能从父节点到子节点）。\n\n**示例**\n```\n输入: root = [10,5,-3,3,2,null,11,3,-2,null,1], targetSum = 8\n输出: 3\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       10,
+       5,
+       -3,
+       3,
+       2,
+       null,
+       11,
+       3,
+       -2,
+       null,
+       1
+      ]
+     },
+     8
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       5,
+       4,
+       8,
+       11,
+       null,
+       13,
+       4,
+       7,
+       2,
+       null,
+       null,
+       5,
+       1
+      ]
+     },
+     22
+    ],
+    "expected": 3
+   }
+  ]
+ },
+ "lowest-common-ancestor-of-a-binary-tree": {
+  "fn": "lowestCommonAncestor",
+  "sig": "def lowestCommonAncestor(self, root: 'TreeNode', p: 'TreeNode', q: 'TreeNode') -> 'TreeNode':",
+  "kind": "tree",
+  "desc": "给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。输入中 `p`、`q` 用节点值表示（树中的值互不相同），判题会校验你返回节点的值。\n\n**示例**\n```\n输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1\n输出: 3\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       3,
+       5,
+       1,
+       6,
+       2,
+       0,
+       8,
+       null,
+       null,
+       7,
+       4
+      ]
+     },
+     {
+      "tval": 5
+     },
+     {
+      "tval": 1
+     }
+    ],
+    "expected": {
+     "tval": 3
+    }
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       3,
+       5,
+       1,
+       6,
+       2,
+       0,
+       8,
+       null,
+       null,
+       7,
+       4
+      ]
+     },
+     {
+      "tval": 5
+     },
+     {
+      "tval": 4
+     }
+    ],
+    "expected": {
+     "tval": 5
+    }
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       2
+      ]
+     },
+     {
+      "tval": 1
+     },
+     {
+      "tval": 2
+     }
+    ],
+    "expected": {
+     "tval": 1
+    }
+   }
+  ]
+ },
+ "binary-tree-maximum-path-sum": {
+  "fn": "maxPathSum",
+  "sig": "def maxPathSum(self, root: Optional[TreeNode]) -> int:",
+  "kind": "tree",
+  "desc": "二叉树中的**路径**被定义为一条节点序列，序列中每对相邻节点之间都存在一条边。同一个节点在一条路径序列中**至多出现一次**。该路径**至少包含一个**节点，且不一定经过根节点。**路径和**是路径中各节点值的总和。给你一个二叉树的根节点 `root`，返回其**最大路径和**。\n\n**示例**\n```\n输入: root = [-10,9,20,null,null,15,7]\n输出: 42\n```",
+  "tests": [
+   {
+    "args": [
+     {
+      "tree": [
+       1,
+       2,
+       3
+      ]
+     }
+    ],
+    "expected": 6
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       -10,
+       9,
+       20,
+       null,
+       null,
+       15,
+       7
+      ]
+     }
+    ],
+    "expected": 42
+   },
+   {
+    "args": [
+     {
+      "tree": [
+       -3
+      ]
+     }
+    ],
+    "expected": -3
+   }
+  ]
+ },
+ "number-of-islands": {
+  "fn": "numIslands",
+  "sig": "def numIslands(self, grid: List[List[str]]) -> int:",
+  "desc": "给你一个由 `'1'`（陆地）和 `'0'`（水）组成的的二维网格，请你计算网格中岛屿的数量。岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。\n\n**示例**\n```\n输入: grid = [[\"1\",\"1\",\"1\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"1\",\"0\"],[\"1\",\"1\",\"0\",\"0\",\"0\"],[\"0\",\"0\",\"0\",\"0\",\"0\"]]\n输出: 1\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      [
+       "1",
+       "1",
+       "1",
+       "1",
+       "0"
+      ],
+      [
+       "1",
+       "1",
+       "0",
+       "1",
+       "0"
+      ],
+      [
+       "1",
+       "1",
+       "0",
+       "0",
+       "0"
+      ],
+      [
+       "0",
+       "0",
+       "0",
+       "0",
+       "0"
+      ]
+     ]
+    ],
+    "expected": 1
+   },
+   {
+    "args": [
+     [
+      [
+       "1",
+       "1",
+       "0",
+       "0",
+       "0"
+      ],
+      [
+       "1",
+       "1",
+       "0",
+       "0",
+       "0"
+      ],
+      [
+       "0",
+       "0",
+       "1",
+       "0",
+       "0"
+      ],
+      [
+       "0",
+       "0",
+       "0",
+       "1",
+       "1"
+      ]
+     ]
+    ],
+    "expected": 3
+   }
+  ]
+ },
+ "rotting-oranges": {
+  "fn": "orangesRotting",
+  "sig": "def orangesRotting(self, grid: List[List[int]]) -> int:",
+  "desc": "在给定的 `m x n` 网格 `grid` 中，每个单元格可以有以下三个值之一：`0` 代表空单元格；`1` 代表新鲜橘子；`2` 代表腐烂的橘子。每分钟，腐烂的橘子会**污染** 4 个方向上相邻的新鲜橘子。返回直到单元格中没有新鲜橘子为止所必须经过的最小分钟数。如果不可能，返回 `-1`。\n\n**示例**\n```\n输入: grid = [[2,1,1],[1,1,0],[0,1,1]]\n输出: 4\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      [
+       2,
+       1,
+       1
+      ],
+      [
+       1,
+       1,
+       0
+      ],
+      [
+       0,
+       1,
+       1
+      ]
+     ]
+    ],
+    "expected": 4
+   },
+   {
+    "args": [
+     [
+      [
+       2,
+       1,
+       1
+      ],
+      [
+       0,
+       1,
+       1
+      ],
+      [
+       1,
+       0,
+       1
+      ]
+     ]
+    ],
+    "expected": -1
+   },
+   {
+    "args": [
+     [
+      [
+       0,
+       2
+      ]
+     ]
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ "course-schedule": {
+  "fn": "canFinish",
+  "sig": "def canFinish(self, numCourses: int, prerequisites: List[List[int]]) -> bool:",
+  "desc": "你这个学期必须选修 `numCourses` 门课程，记为 `0` 到 `numCourses - 1`。在选修某些课程之前需要一些先修课程。先修课程按数组 `prerequisites` 给出，其中 `prerequisites[i] = [ai, bi]`，表示如果要学习课程 `ai` 则必须先学习课程 `bi`。请你判断是否可能完成所有课程的学习。\n\n**示例**\n```\n输入: numCourses = 2, prerequisites = [[1,0]]\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     2,
+     [
+      [
+       1,
+       0
+      ]
+     ]
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     2,
+     [
+      [
+       1,
+       0
+      ],
+      [
+       0,
+       1
+      ]
+     ]
+    ],
+    "expected": false
+   }
+  ]
+ },
+ "implement-trie-prefix-tree": {
+  "fn": "Trie",
+  "kind": "design",
+  "sig": "class Trie:\n    def __init__(self):\n        pass\n\n    def insert(self, word: str) -> None:\n        pass\n\n    def search(self, word: str) -> bool:\n        pass\n\n    def startsWith(self, prefix: str) -> bool:\n        pass",
+  "design": {
+   "cls": "Trie",
+   "init": []
+  },
+  "desc": "**Trie（前缀树）**是一种树形数据结构，用于高效地存储和检索字符串数据集中的键。请你实现 Trie 类：\n\n- `Trie()` 初始化前缀树对象\n- `insert(word)` 向前缀树中插入字符串 `word`\n- `search(word)` 如果字符串 `word` 在前缀树中，返回 `true`\n- `startsWith(prefix)` 如果存在以 `prefix` 开头的字符串，返回 `true`\n\n**示例**\n```\n输入: [\"Trie\", \"insert\", \"search\", \"search\", \"startsWith\", \"insert\", \"search\"]\n     [[], [\"apple\"], [\"apple\"], [\"app\"], [\"app\"], [\"app\"], [\"app\"]]\n输出: [null, null, true, false, true, null, true]\n```",
+  "tests": [
+   {
+    "ops": [
+     "insert",
+     "search",
+     "search",
+     "startsWith",
+     "insert",
+     "search"
+    ],
+    "opargs": [
+     [
+      "apple"
+     ],
+     [
+      "apple"
+     ],
+     [
+      "app"
+     ],
+     [
+      "app"
+     ],
+     [
+      "app"
+     ],
+     [
+      "app"
+     ]
+    ],
+    "expected": [
+     null,
+     true,
+     false,
+     true,
+     null,
+     true
+    ]
+   }
+  ]
+ },
+ "permutations": {
+  "fn": "permute",
+  "sig": "def permute(self, nums: List[int]) -> List[List[int]]:",
+  "unord": true,
+  "desc": "给定一个不含重复数字的数组 `nums`，返回其**所有可能的全排列**。你可以按任意顺序返回答案。\n\n**示例**\n```\n输入: nums = [1,2,3]\n输出: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      2,
+      3
+     ]
+    ],
+    "expected": [
+     [
+      1,
+      2,
+      3
+     ],
+     [
+      1,
+      3,
+      2
+     ],
+     [
+      2,
+      1,
+      3
+     ],
+     [
+      2,
+      3,
+      1
+     ],
+     [
+      3,
+      1,
+      2
+     ],
+     [
+      3,
+      2,
+      1
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      0,
+      1
+     ]
+    ],
+    "expected": [
+     [
+      0,
+      1
+     ],
+     [
+      1,
+      0
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      1
+     ]
+    ],
+    "expected": [
+     [
+      1
+     ]
+    ]
+   }
+  ]
+ },
+ "subsets": {
+  "fn": "subsets",
+  "sig": "def subsets(self, nums: List[int]) -> List[List[int]]:",
+  "unord": true,
+  "desc": "给你一个整数数组 `nums`，数组中的元素**互不相同**。返回该数组所有可能的子集（幂集）。解集**不能**包含重复的子集。你可以按任意顺序返回解集。\n\n**示例**\n```\n输入: nums = [1,2,3]\n输出: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      2,
+      3
+     ]
+    ],
+    "expected": [
+     [],
+     [
+      1
+     ],
+     [
+      2
+     ],
+     [
+      1,
+      2
+     ],
+     [
+      3
+     ],
+     [
+      1,
+      3
+     ],
+     [
+      2,
+      3
+     ],
+     [
+      1,
+      2,
+      3
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      0
+     ]
+    ],
+    "expected": [
+     [],
+     [
+      0
+     ]
+    ]
+   }
+  ]
+ },
+ "letter-combinations-of-a-phone-number": {
+  "fn": "letterCombinations",
+  "sig": "def letterCombinations(self, digits: str) -> List[str]:",
+  "unord": true,
+  "desc": "给定一个仅包含数字 `2-9` 的字符串，返回所有它能表示的字母组合（电话键盘映射）。答案可以按任意顺序返回。\n\n**示例**\n```\n输入: digits = \"23\"\n输出: [\"ad\",\"ae\",\"af\",\"bd\",\"be\",\"bf\",\"cd\",\"ce\",\"cf\"]\n```",
+  "tests": [
+   {
+    "args": [
+     "23"
+    ],
+    "expected": [
+     "ad",
+     "ae",
+     "af",
+     "bd",
+     "be",
+     "bf",
+     "cd",
+     "ce",
+     "cf"
+    ]
+   },
+   {
+    "args": [
+     ""
+    ],
+    "expected": []
+   },
+   {
+    "args": [
+     "2"
+    ],
+    "expected": [
+     "a",
+     "b",
+     "c"
+    ]
+   }
+  ]
+ },
+ "combination-sum": {
+  "fn": "combinationSum",
+  "sig": "def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:",
+  "unord": true,
+  "desc": "给你一个**无重复元素**的整数数组 `candidates` 和一个目标整数 `target`，找出 `candidates` 中可以使数字和为目标数 `target` 的所有不同组合，并以列表形式返回。`candidates` 中的同一个数字可以**无限制重复被选取**。\n\n**示例**\n```\n输入: candidates = [2,3,6,7], target = 7\n输出: [[2,2,3],[7]]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      2,
+      3,
+      6,
+      7
+     ],
+     7
+    ],
+    "expected": [
+     [
+      2,
+      2,
+      3
+     ],
+     [
+      7
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      2,
+      3,
+      5
+     ],
+     8
+    ],
+    "expected": [
+     [
+      2,
+      2,
+      2,
+      2
+     ],
+     [
+      2,
+      3,
+      3
+     ],
+     [
+      3,
+      5
+     ]
+    ]
+   },
+   {
+    "args": [
+     [
+      2
+     ],
+     1
+    ],
+    "expected": []
+   }
+  ]
+ },
+ "generate-parentheses": {
+  "fn": "generateParenthesis",
+  "sig": "def generateParenthesis(self, n: int) -> List[str]:",
+  "unord": true,
+  "desc": "数字 `n` 代表生成括号的对数，请你设计一个函数，用于能够生成所有可能的并且**有效的**括号组合。\n\n**示例**\n```\n输入: n = 3\n输出: [\"((()))\",\"(()())\",\"(())()\",\"()(())\",\"()()()\"]\n```",
+  "tests": [
+   {
+    "args": [
+     3
+    ],
+    "expected": [
+     "((()))",
+     "(()())",
+     "(())()",
+     "()(())",
+     "()()()"
+    ]
+   },
+   {
+    "args": [
+     1
+    ],
+    "expected": [
+     "()"
+    ]
+   }
+  ]
+ },
+ "word-search": {
+  "fn": "exist",
+  "sig": "def exist(self, board: List[List[str]], word: str) -> bool:",
+  "desc": "给定一个 `m x n` 二维字符网格 `board` 和一个字符串单词 `word`。如果 `word` 存在于网格中，返回 `true`；否则，返回 `false`。单词必须按照字母顺序，通过相邻的单元格内的字母构成（水平或垂直相邻），同一个单元格内的字母不允许被重复使用。\n\n**示例**\n```\n输入: board = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], word = \"ABCCED\"\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      [
+       "A",
+       "B",
+       "C",
+       "E"
+      ],
+      [
+       "S",
+       "F",
+       "C",
+       "S"
+      ],
+      [
+       "A",
+       "D",
+       "E",
+       "E"
+      ]
+     ],
+     "ABCCED"
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     [
+      [
+       "A",
+       "B",
+       "C",
+       "E"
+      ],
+      [
+       "S",
+       "F",
+       "C",
+       "S"
+      ],
+      [
+       "A",
+       "D",
+       "E",
+       "E"
+      ]
+     ],
+     "SEE"
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     [
+      [
+       "A",
+       "B",
+       "C",
+       "E"
+      ],
+      [
+       "S",
+       "F",
+       "C",
+       "S"
+      ],
+      [
+       "A",
+       "D",
+       "E",
+       "E"
+      ]
+     ],
+     "ABCB"
+    ],
+    "expected": false
+   }
+  ]
+ },
+ "palindrome-partitioning": {
+  "fn": "partition",
+  "sig": "def partition(self, s: str) -> List[List[str]]:",
+  "unord": true,
+  "desc": "给你一个字符串 `s`，请你将 `s` 分割成一些子串，使每个子串都是**回文串**。返回 `s` 所有可能的分割方案。\n\n**示例**\n```\n输入: s = \"aab\"\n输出: [[\"a\",\"a\",\"b\"],[\"aa\",\"b\"]]\n```",
+  "tests": [
+   {
+    "args": [
+     "aab"
+    ],
+    "expected": [
+     [
+      "a",
+      "a",
+      "b"
+     ],
+     [
+      "aa",
+      "b"
+     ]
+    ]
+   },
+   {
+    "args": [
+     "a"
+    ],
+    "expected": [
+     [
+      "a"
+     ]
+    ]
+   }
+  ]
+ },
+ "n-queens": {
+  "fn": "solveNQueens",
+  "sig": "def solveNQueens(self, n: int) -> List[List[str]]:",
+  "unord": true,
+  "desc": "按照国际象棋的规则，皇后可以攻击与之处在同一行或同一列或同一斜线上的棋子。**n 皇后问题**研究的是如何将 `n` 个皇后放置在 `n×n` 的棋盘上，并且使皇后彼此之间不能相互攻击。给你一个整数 `n`，返回所有不同的解决方案，每种解法用一个字符串列表表示棋盘，`'Q'` 和 `'.'` 分别代表皇后和空位。\n\n**示例**\n```\n输入: n = 4\n输出: [[\".Q..\",\"...Q\",\"Q...\",\"..Q.\"],[\"..Q.\",\"Q...\",\"...Q\",\".Q..\"]]\n```",
+  "tests": [
+   {
+    "args": [
+     4
+    ],
+    "expected": [
+     [
+      ".Q..",
+      "...Q",
+      "Q...",
+      "..Q."
+     ],
+     [
+      "..Q.",
+      "Q...",
+      "...Q",
+      ".Q.."
+     ]
+    ]
+   },
+   {
+    "args": [
+     1
+    ],
+    "expected": [
+     [
+      "Q"
+     ]
+    ]
+   }
+  ]
+ },
+ "search-insert-position": {
+  "fn": "searchInsert",
+  "sig": "def searchInsert(self, nums: List[int], target: int) -> int:",
+  "desc": "给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。请必须使用时间复杂度为 O(log n) 的算法。\n\n**示例**\n```\n输入: nums = [1,3,5,6], target = 5\n输出: 2\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      3,
+      5,
+      6
+     ],
+     5
+    ],
+    "expected": 2
+   },
+   {
+    "args": [
+     [
+      1,
+      3,
+      5,
+      6
+     ],
+     2
+    ],
+    "expected": 1
+   },
+   {
+    "args": [
+     [
+      1,
+      3,
+      5,
+      6
+     ],
+     7
+    ],
+    "expected": 4
+   }
+  ]
+ },
+ "search-a-2d-matrix": {
+  "fn": "searchMatrix",
+  "sig": "def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:",
+  "desc": "给你一个满足下述两条属性的 `m x n` 整数矩阵：每行中的整数从左到右按非严格递增排列；每行的第一个整数大于前一行的最后一个整数。给你一个整数 `target`，如果 `target` 在矩阵中，返回 `true`；否则，返回 `false`。\n\n**示例**\n```\n输入: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      [
+       1,
+       3,
+       5,
+       7
+      ],
+      [
+       10,
+       11,
+       16,
+       20
+      ],
+      [
+       23,
+       30,
+       34,
+       60
+      ]
+     ],
+     3
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     [
+      [
+       1,
+       3,
+       5,
+       7
+      ],
+      [
+       10,
+       11,
+       16,
+       20
+      ],
+      [
+       23,
+       30,
+       34,
+       60
+      ]
+     ],
+     13
+    ],
+    "expected": false
+   }
+  ]
+ },
+ "find-first-and-last-position-of-element-in-sorted-array": {
+  "fn": "searchRange",
+  "sig": "def searchRange(self, nums: List[int], target: int) -> List[int]:",
+  "desc": "给你一个按照非递减顺序排列的整数数组 `nums`，和一个目标值 `target`。请你找出给定目标值在数组中的开始位置和结束位置。如果数组中不存在目标值 `target`，返回 `[-1, -1]`。你必须设计并实现时间复杂度为 O(log n) 的算法。\n\n**示例**\n```\n输入: nums = [5,7,7,8,8,10], target = 8\n输出: [3,4]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      5,
+      7,
+      7,
+      8,
+      8,
+      10
+     ],
+     8
+    ],
+    "expected": [
+     3,
+     4
+    ]
+   },
+   {
+    "args": [
+     [
+      5,
+      7,
+      7,
+      8,
+      8,
+      10
+     ],
+     6
+    ],
+    "expected": [
+     -1,
+     -1
+    ]
+   },
+   {
+    "args": [
+     [],
+     0
+    ],
+    "expected": [
+     -1,
+     -1
+    ]
+   }
+  ]
+ },
+ "search-in-rotated-sorted-array": {
+  "fn": "search",
+  "sig": "def search(self, nums: List[int], target: int) -> int:",
+  "desc": "整数数组 `nums` 按升序排列，数组中的值**互不相同**。在传递给函数之前，`nums` 在预先未知的某个下标 `k` 上进行了旋转。给你**旋转后**的数组 `nums` 和一个整数 `target`，如果 `nums` 中存在这个目标值 `target`，则返回它的下标，否则返回 `-1`。你必须设计一个时间复杂度为 O(log n) 的算法。\n\n**示例**\n```\n输入: nums = [4,5,6,7,0,1,2], target = 0\n输出: 4\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      4,
+      5,
+      6,
+      7,
+      0,
+      1,
+      2
+     ],
+     0
+    ],
+    "expected": 4
+   },
+   {
+    "args": [
+     [
+      4,
+      5,
+      6,
+      7,
+      0,
+      1,
+      2
+     ],
+     3
+    ],
+    "expected": -1
+   },
+   {
+    "args": [
+     [
+      1
+     ],
+     0
+    ],
+    "expected": -1
+   }
+  ]
+ },
+ "find-minimum-in-rotated-sorted-array": {
+  "fn": "findMin",
+  "sig": "def findMin(self, nums: List[int]) -> int:",
+  "desc": "已知一个长度为 `n` 的数组，预先按照升序排列，经由 `1` 到 `n` 次旋转后，得到输入数组。请你找出并返回数组中的**最小元素**。你必须设计一个时间复杂度为 O(log n) 的算法。\n\n**示例**\n```\n输入: nums = [3,4,5,1,2]\n输出: 1\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      3,
+      4,
+      5,
+      1,
+      2
+     ]
+    ],
+    "expected": 1
+   },
+   {
+    "args": [
+     [
+      4,
+      5,
+      6,
+      7,
+      0,
+      1,
+      2
+     ]
+    ],
+    "expected": 0
+   },
+   {
+    "args": [
+     [
+      11,
+      13,
+      15,
+      17
+     ]
+    ],
+    "expected": 11
+   }
+  ]
+ },
+ "median-of-two-sorted-arrays": {
+  "fn": "findMedianSortedArrays",
+  "sig": "def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:",
+  "eps": true,
+  "desc": "给定两个大小分别为 `m` 和 `n` 的正序（从小到大）数组 `nums1` 和 `nums2`。请你找出并返回这两个正序数组的**中位数**。算法的时间复杂度应该为 O(log (m+n))。\n\n**示例**\n```\n输入: nums1 = [1,3], nums2 = [2]\n输出: 2.0\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      3
+     ],
+     [
+      2
+     ]
+    ],
+    "expected": 2.0
+   },
+   {
+    "args": [
+     [
+      1,
+      2
+     ],
+     [
+      3,
+      4
+     ]
+    ],
+    "expected": 2.5
+   },
+   {
+    "args": [
+     [],
+     [
+      1
+     ]
+    ],
+    "expected": 1.0
+   }
+  ]
+ },
+ "valid-parentheses": {
+  "fn": "isValid",
+  "sig": "def isValid(self, s: str) -> bool:",
+  "desc": "给定一个只包括 `'('`，`')'`，`'{'`，`'}'`，`'['`，`']'` 的字符串 `s`，判断字符串是否有效。有效字符串需满足：左括号必须用相同类型的右括号闭合；左括号必须以正确的顺序闭合。\n\n**示例**\n```\n输入: s = \"()[]{}\"\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     "()"
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     "()[]{}"
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     "(]"
+    ],
+    "expected": false
+   },
+   {
+    "args": [
+     "([)]"
+    ],
+    "expected": false
+   }
+  ]
+ },
+ "min-stack": {
+  "fn": "MinStack",
+  "kind": "design",
+  "sig": "class MinStack:\n    def __init__(self):\n        pass\n\n    def push(self, val: int) -> None:\n        pass\n\n    def pop(self) -> None:\n        pass\n\n    def top(self) -> int:\n        pass\n\n    def getMin(self) -> int:\n        pass",
+  "design": {
+   "cls": "MinStack",
+   "init": []
+  },
+  "desc": "设计一个支持 `push`，`pop`，`top` 操作，并能在**常数时间内**检索到最小元素的栈。实现 `MinStack` 类：\n\n- `push(val)` 将元素 val 推入堆栈\n- `pop()` 删除栈顶的元素\n- `top()` 获取栈顶元素\n- `getMin()` 检索栈中的最小元素\n\n**示例**\n```\n输入: [\"MinStack\",\"push\",\"push\",\"push\",\"getMin\",\"pop\",\"top\",\"getMin\"]\n     [[],[-2],[0],[-3],[],[],[],[]]\n输出: [null,null,null,null,-3,null,0,-2]\n```",
+  "tests": [
+   {
+    "ops": [
+     "push",
+     "push",
+     "push",
+     "getMin",
+     "pop",
+     "top",
+     "getMin"
+    ],
+    "opargs": [
+     [
+      -2
+     ],
+     [
+      0
+     ],
+     [
+      -3
+     ],
+     [],
+     [],
+     [],
+     []
+    ],
+    "expected": [
+     null,
+     null,
+     null,
+     -3,
+     null,
+     0,
+     -2
+    ]
+   }
+  ]
+ },
+ "decode-string": {
+  "fn": "decodeString",
+  "sig": "def decodeString(self, s: str) -> str:",
+  "desc": "给定一个经过编码的字符串，返回它解码后的字符串。编码规则为: `k[encoded_string]`，表示其中方括号内部的 `encoded_string` 正好重复 `k` 次。\n\n**示例**\n```\n输入: s = \"3[a]2[bc]\"\n输出: \"aaabcbc\"\n```",
+  "tests": [
+   {
+    "args": [
+     "3[a]2[bc]"
+    ],
+    "expected": "aaabcbc"
+   },
+   {
+    "args": [
+     "3[a2[c]]"
+    ],
+    "expected": "accaccacc"
+   },
+   {
+    "args": [
+     "2[abc]3[cd]ef"
+    ],
+    "expected": "abcabccdcdcdef"
+   }
+  ]
+ },
+ "daily-temperatures": {
+  "fn": "dailyTemperatures",
+  "sig": "def dailyTemperatures(self, temperatures: List[int]) -> List[int]:",
+  "desc": "给定一个整数数组 `temperatures`，表示每天的温度，返回一个数组 `answer`，其中 `answer[i]` 是指对于第 `i` 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 `0` 来代替。\n\n**示例**\n```\n输入: temperatures = [73,74,75,71,69,72,76,73]\n输出: [1,1,4,2,1,1,0,0]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      73,
+      74,
+      75,
+      71,
+      69,
+      72,
+      76,
+      73
+     ]
+    ],
+    "expected": [
+     1,
+     1,
+     4,
+     2,
+     1,
+     1,
+     0,
+     0
+    ]
+   },
+   {
+    "args": [
+     [
+      30,
+      40,
+      50,
+      60
+     ]
+    ],
+    "expected": [
+     1,
+     1,
+     1,
+     0
+    ]
+   },
+   {
+    "args": [
+     [
+      30,
+      60,
+      90
+     ]
+    ],
+    "expected": [
+     1,
+     1,
+     0
+    ]
+   }
+  ]
+ },
+ "largest-rectangle-in-histogram": {
+  "fn": "largestRectangleArea",
+  "sig": "def largestRectangleArea(self, heights: List[int]) -> int:",
+  "desc": "给定 `n` 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1。求在该柱状图中，能够勾勒出来的矩形的最大面积。\n\n**示例**\n```\n输入: heights = [2,1,5,6,2,3]\n输出: 10\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      2,
+      1,
+      5,
+      6,
+      2,
+      3
+     ]
+    ],
+    "expected": 10
+   },
+   {
+    "args": [
+     [
+      2,
+      4
+     ]
+    ],
+    "expected": 4
+   },
+   {
+    "args": [
+     [
+      2,
+      1,
+      2
+     ]
+    ],
+    "expected": 3
+   }
+  ]
+ },
+ "kth-largest-element-in-an-array": {
+  "fn": "findKthLargest",
+  "sig": "def findKthLargest(self, nums: List[int], k: int) -> int:",
+  "desc": "给定整数数组 `nums` 和整数 `k`，请返回数组中第 `k` 个最大的元素。请注意，你需要找的是数组**排序后**的第 k 个最大的元素，而不是第 k 个不同的元素。\n\n**示例**\n```\n输入: nums = [3,2,1,5,6,4], k = 2\n输出: 5\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      3,
+      2,
+      1,
+      5,
+      6,
+      4
+     ],
+     2
+    ],
+    "expected": 5
+   },
+   {
+    "args": [
+     [
+      3,
+      2,
+      3,
+      1,
+      2,
+      4,
+      5,
+      5,
+      6
+     ],
+     4
+    ],
+    "expected": 4
+   }
+  ]
+ },
+ "top-k-frequent-elements": {
+  "fn": "topKFrequent",
+  "sig": "def topKFrequent(self, nums: List[int], k: int) -> List[int]:",
+  "unord": true,
+  "desc": "给你一个整数数组 `nums` 和一个整数 `k`，请你返回其中出现频率前 `k` 高的元素。你可以按任意顺序返回答案。\n\n**示例**\n```\n输入: nums = [1,1,1,2,2,3], k = 2\n输出: [1,2]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      1,
+      1,
+      2,
+      2,
+      3
+     ],
+     2
+    ],
+    "expected": [
+     1,
+     2
+    ]
+   },
+   {
+    "args": [
+     [
+      1
+     ],
+     1
+    ],
+    "expected": [
+     1
+    ]
+   }
+  ]
+ },
+ "find-median-from-data-stream": {
+  "fn": "MedianFinder",
+  "kind": "design",
+  "sig": "class MedianFinder:\n    def __init__(self):\n        pass\n\n    def addNum(self, num: int) -> None:\n        pass\n\n    def findMedian(self) -> float:\n        pass",
+  "design": {
+   "cls": "MedianFinder",
+   "init": []
+  },
+  "eps": true,
+  "desc": "**中位数**是有序整数列表中的中间值。如果列表的大小是偶数，则没有中间值，中位数是两个中间值的平均值。实现 `MedianFinder` 类：\n\n- `addNum(num)` 将数据流中的整数 `num` 添加到数据结构中\n- `findMedian()` 返回到目前为止所有元素的中位数\n\n**示例**\n```\n输入: [\"MedianFinder\", \"addNum\", \"addNum\", \"findMedian\", \"addNum\", \"findMedian\"]\n     [[], [1], [2], [], [3], []]\n输出: [null, null, null, 1.5, null, 2.0]\n```",
+  "tests": [
+   {
+    "ops": [
+     "addNum",
+     "addNum",
+     "findMedian",
+     "addNum",
+     "findMedian"
+    ],
+    "opargs": [
+     [
+      1
+     ],
+     [
+      2
+     ],
+     [],
+     [
+      3
+     ],
+     []
+    ],
+    "expected": [
+     null,
+     null,
+     1.5,
+     null,
+     2.0
+    ]
+   }
+  ]
+ },
+ "best-time-to-buy-and-sell-stock": {
+  "fn": "maxProfit",
+  "sig": "def maxProfit(self, prices: List[int]) -> int:",
+  "desc": "给定一个数组 `prices`，它的第 `i` 个元素 `prices[i]` 表示一支给定股票第 `i` 天的价格。你只能选择**某一天**买入这只股票，并选择在**未来的某一个不同的日子**卖出该股票。设计一个算法来计算你所能获取的最大利润。如果你不能获取任何利润，返回 `0`。\n\n**示例**\n```\n输入: prices = [7,1,5,3,6,4]\n输出: 5\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      7,
+      1,
+      5,
+      3,
+      6,
+      4
+     ]
+    ],
+    "expected": 5
+   },
+   {
+    "args": [
+     [
+      7,
+      6,
+      4,
+      3,
+      1
+     ]
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ "jump-game": {
+  "fn": "canJump",
+  "sig": "def canJump(self, nums: List[int]) -> bool:",
+  "desc": "给定一个非负整数数组 `nums`，你最初位于数组的**第一个下标**。数组中的每个元素代表你在该位置可以跳跃的最大长度。判断你是否能够到达最后一个下标。\n\n**示例**\n```\n输入: nums = [2,3,1,1,4]\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      2,
+      3,
+      1,
+      1,
+      4
+     ]
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     [
+      3,
+      2,
+      1,
+      0,
+      4
+     ]
+    ],
+    "expected": false
+   },
+   {
+    "args": [
+     [
+      0
+     ]
+    ],
+    "expected": true
+   }
+  ]
+ },
+ "jump-game-ii": {
+  "fn": "jump",
+  "sig": "def jump(self, nums: List[int]) -> int:",
+  "desc": "给定一个长度为 `n` 的 0 索引整数数组 `nums`。初始位置为 `nums[0]`。每个元素 `nums[i]` 表示从索引 `i` 向后跳转的最大长度。返回到达 `nums[n - 1]` 的最小跳跃次数。题目的测试用例保证可以到达最后一个下标。\n\n**示例**\n```\n输入: nums = [2,3,1,1,4]\n输出: 2\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      2,
+      3,
+      1,
+      1,
+      4
+     ]
+    ],
+    "expected": 2
+   },
+   {
+    "args": [
+     [
+      2,
+      3,
+      0,
+      1,
+      4
+     ]
+    ],
+    "expected": 2
+   }
+  ]
+ },
+ "partition-labels": {
+  "fn": "partitionLabels",
+  "sig": "def partitionLabels(self, s: str) -> List[int]:",
+  "desc": "给你一个字符串 `s`。我们要把这个字符串划分为尽可能多的片段，同一字母最多出现在一个片段中。返回一个表示每个字符串片段的长度的列表。\n\n**示例**\n```\n输入: s = \"ababcbacadefegdehijhklij\"\n输出: [9,7,8]\n```",
+  "tests": [
+   {
+    "args": [
+     "ababcbacadefegdehijhklij"
+    ],
+    "expected": [
+     9,
+     7,
+     8
+    ]
+   },
+   {
+    "args": [
+     "eccbbbbdec"
+    ],
+    "expected": [
+     10
+    ]
+   }
+  ]
+ },
+ "climbing-stairs": {
+  "fn": "climbStairs",
+  "sig": "def climbStairs(self, n: int) -> int:",
+  "desc": "假设你正在爬楼梯。需要 `n` 阶你才能到达楼顶。每次你可以爬 `1` 或 `2` 个台阶。你有多少种不同的方法可以爬到楼顶呢？\n\n**示例**\n```\n输入: n = 3\n输出: 3\n解释: 1+1+1 / 1+2 / 2+1\n```",
+  "tests": [
+   {
+    "args": [
+     2
+    ],
+    "expected": 2
+   },
+   {
+    "args": [
+     3
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     10
+    ],
+    "expected": 89
+   }
+  ]
+ },
+ "pascals-triangle": {
+  "fn": "generate",
+  "sig": "def generate(self, numRows: int) -> List[List[int]]:",
+  "desc": "给定一个非负整数 `numRows`，生成「杨辉三角」的前 `numRows` 行。在杨辉三角中，每个数是它左上方和右上方的数的和。\n\n**示例**\n```\n输入: numRows = 5\n输出: [[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1]]\n```",
+  "tests": [
+   {
+    "args": [
+     5
+    ],
+    "expected": [
+     [
+      1
+     ],
+     [
+      1,
+      1
+     ],
+     [
+      1,
+      2,
+      1
+     ],
+     [
+      1,
+      3,
+      3,
+      1
+     ],
+     [
+      1,
+      4,
+      6,
+      4,
+      1
+     ]
+    ]
+   },
+   {
+    "args": [
+     1
+    ],
+    "expected": [
+     [
+      1
+     ]
+    ]
+   }
+  ]
+ },
+ "house-robber": {
+  "fn": "rob",
+  "sig": "def rob(self, nums: List[int]) -> int:",
+  "desc": "你是一个专业的小偷，计划偷窃沿街的房屋。每间房内都藏有一定的现金，影响你偷窃的唯一制约因素就是相邻的房屋装有相互连通的防盗系统，**如果两间相邻的房屋在同一晚上被小偷闯入，系统会自动报警**。给定一个代表每个房屋存放金额的非负整数数组，计算你不触动警报装置的情况下，一夜之内能够偷窃到的最高金额。\n\n**示例**\n```\n输入: nums = [1,2,3,1]\n输出: 4\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      2,
+      3,
+      1
+     ]
+    ],
+    "expected": 4
+   },
+   {
+    "args": [
+     [
+      2,
+      7,
+      9,
+      3,
+      1
+     ]
+    ],
+    "expected": 12
+   }
+  ]
+ },
+ "perfect-squares": {
+  "fn": "numSquares",
+  "sig": "def numSquares(self, n: int) -> int:",
+  "desc": "给你一个整数 `n`，返回和为 `n` 的完全平方数的最少数量。完全平方数是一个整数，其值等于另一个整数的平方，如 1、4、9、16。\n\n**示例**\n```\n输入: n = 12\n输出: 3\n解释: 12 = 4 + 4 + 4\n```",
+  "tests": [
+   {
+    "args": [
+     12
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     13
+    ],
+    "expected": 2
+   }
+  ]
+ },
+ "coin-change": {
+  "fn": "coinChange",
+  "sig": "def coinChange(self, coins: List[int], amount: int) -> int:",
+  "desc": "给你一个整数数组 `coins`，表示不同面额的硬币；以及一个整数 `amount`，表示总金额。计算并返回可以凑成总金额所需的**最少的硬币个数**。如果没有任何一种硬币组合能组成总金额，返回 `-1`。你可以认为每种硬币的数量是无限的。\n\n**示例**\n```\n输入: coins = [1,2,5], amount = 11\n输出: 3\n解释: 11 = 5 + 5 + 1\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      2,
+      5
+     ],
+     11
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     [
+      2
+     ],
+     3
+    ],
+    "expected": -1
+   },
+   {
+    "args": [
+     [
+      1
+     ],
+     0
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ "word-break": {
+  "fn": "wordBreak",
+  "sig": "def wordBreak(self, s: str, wordDict: List[str]) -> bool:",
+  "desc": "给你一个字符串 `s` 和一个字符串列表 `wordDict` 作为字典。如果可以利用字典中出现的一个或多个单词拼接出 `s` 则返回 `true`（单词可以重复使用）。\n\n**示例**\n```\n输入: s = \"leetcode\", wordDict = [\"leet\", \"code\"]\n输出: true\n```",
+  "tests": [
+   {
+    "args": [
+     "leetcode",
+     [
+      "leet",
+      "code"
+     ]
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     "applepenapple",
+     [
+      "apple",
+      "pen"
+     ]
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     "catsandog",
+     [
+      "cats",
+      "dog",
+      "sand",
+      "and",
+      "cat"
+     ]
+    ],
+    "expected": false
+   }
+  ]
+ },
+ "longest-increasing-subsequence": {
+  "fn": "lengthOfLIS",
+  "sig": "def lengthOfLIS(self, nums: List[int]) -> int:",
+  "desc": "给你一个整数数组 `nums`，找到其中最长**严格递增**子序列的长度。子序列是由数组派生而来的序列，删除（或不删除）数组中的元素而不改变其余元素的顺序。\n\n**示例**\n```\n输入: nums = [10,9,2,5,3,7,101,18]\n输出: 4\n解释: 最长递增子序列是 [2,3,7,101]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      10,
+      9,
+      2,
+      5,
+      3,
+      7,
+      101,
+      18
+     ]
+    ],
+    "expected": 4
+   },
+   {
+    "args": [
+     [
+      0,
+      1,
+      0,
+      3,
+      2,
+      3
+     ]
+    ],
+    "expected": 4
+   },
+   {
+    "args": [
+     [
+      7,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7
+     ]
+    ],
+    "expected": 1
+   }
+  ]
+ },
+ "maximum-product-subarray": {
+  "fn": "maxProduct",
+  "sig": "def maxProduct(self, nums: List[int]) -> int:",
+  "desc": "给你一个整数数组 `nums`，请你找出数组中乘积最大的**非空连续子数组**，并返回该子数组所对应的乘积。\n\n**示例**\n```\n输入: nums = [2,3,-2,4]\n输出: 6\n解释: 子数组 [2,3] 有最大乘积 6\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      2,
+      3,
+      -2,
+      4
+     ]
+    ],
+    "expected": 6
+   },
+   {
+    "args": [
+     [
+      -2,
+      0,
+      -1
+     ]
+    ],
+    "expected": 0
+   },
+   {
+    "args": [
+     [
+      -2,
+      3,
+      -4
+     ]
+    ],
+    "expected": 24
+   }
+  ]
+ },
+ "partition-equal-subset-sum": {
+  "fn": "canPartition",
+  "sig": "def canPartition(self, nums: List[int]) -> bool:",
+  "desc": "给你一个**只包含正整数**的**非空**数组 `nums`。请你判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。\n\n**示例**\n```\n输入: nums = [1,5,11,5]\n输出: true\n解释: 可以分割成 [1, 5, 5] 和 [11]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      5,
+      11,
+      5
+     ]
+    ],
+    "expected": true
+   },
+   {
+    "args": [
+     [
+      1,
+      2,
+      3,
+      5
+     ]
+    ],
+    "expected": false
+   }
+  ]
+ },
+ "longest-valid-parentheses": {
+  "fn": "longestValidParentheses",
+  "sig": "def longestValidParentheses(self, s: str) -> int:",
+  "desc": "给你一个只包含 `'('` 和 `')'` 的字符串，找出最长有效（格式正确且连续）括号子串的长度。\n\n**示例**\n```\n输入: s = \"(()\"\n输出: 2\n```",
+  "tests": [
+   {
+    "args": [
+     "(()"
+    ],
+    "expected": 2
+   },
+   {
+    "args": [
+     ")()())"
+    ],
+    "expected": 4
+   },
+   {
+    "args": [
+     ""
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ "unique-paths": {
+  "fn": "uniquePaths",
+  "sig": "def uniquePaths(self, m: int, n: int) -> int:",
+  "desc": "一个机器人位于一个 `m x n` 网格的左上角（起始点）。机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角。问总共有多少条不同的路径？\n\n**示例**\n```\n输入: m = 3, n = 7\n输出: 28\n```",
+  "tests": [
+   {
+    "args": [
+     3,
+     7
+    ],
+    "expected": 28
+   },
+   {
+    "args": [
+     3,
+     2
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     1,
+     1
+    ],
+    "expected": 1
+   }
+  ]
+ },
+ "minimum-path-sum": {
+  "fn": "minPathSum",
+  "sig": "def minPathSum(self, grid: List[List[int]]) -> int:",
+  "desc": "给定一个包含非负整数的 `m x n` 网格 `grid`，请找出一条从左上角到右下角的路径，使得路径上的数字总和为最小。每次只能向下或者向右移动一步。\n\n**示例**\n```\n输入: grid = [[1,3,1],[1,5,1],[4,2,1]]\n输出: 7\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      [
+       1,
+       3,
+       1
+      ],
+      [
+       1,
+       5,
+       1
+      ],
+      [
+       4,
+       2,
+       1
+      ]
+     ]
+    ],
+    "expected": 7
+   },
+   {
+    "args": [
+     [
+      [
+       1,
+       2,
+       3
+      ],
+      [
+       4,
+       5,
+       6
+      ]
+     ]
+    ],
+    "expected": 12
+   }
+  ]
+ },
+ "longest-palindromic-substring": {
+  "fn": "longestPalindrome",
+  "sig": "def longestPalindrome(self, s: str) -> str:",
+  "desc": "给你一个字符串 `s`，找到 `s` 中最长的**回文子串**。如果存在多个同样长的答案，返回任意一个即可（判题用例已保证答案唯一）。\n\n**示例**\n```\n输入: s = \"cbbd\"\n输出: \"bb\"\n```",
+  "tests": [
+   {
+    "args": [
+     "cbbd"
+    ],
+    "expected": "bb"
+   },
+   {
+    "args": [
+     "a"
+    ],
+    "expected": "a"
+   },
+   {
+    "args": [
+     "forgeeksskeegfor"
+    ],
+    "expected": "geeksskeeg"
+   }
+  ]
+ },
+ "longest-common-subsequence": {
+  "fn": "longestCommonSubsequence",
+  "sig": "def longestCommonSubsequence(self, text1: str, text2: str) -> int:",
+  "desc": "给定两个字符串 `text1` 和 `text2`，返回这两个字符串的最长**公共子序列**的长度。如果不存在公共子序列，返回 `0`。\n\n**示例**\n```\n输入: text1 = \"abcde\", text2 = \"ace\"\n输出: 3\n解释: 最长公共子序列是 \"ace\"\n```",
+  "tests": [
+   {
+    "args": [
+     "abcde",
+     "ace"
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     "abc",
+     "abc"
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     "abc",
+     "def"
+    ],
+    "expected": 0
+   }
+  ]
+ },
+ "edit-distance": {
+  "fn": "minDistance",
+  "sig": "def minDistance(self, word1: str, word2: str) -> int:",
+  "desc": "给你两个单词 `word1` 和 `word2`，请返回将 `word1` 转换成 `word2` 所使用的最少操作数。你可以对一个单词进行如下三种操作：插入一个字符、删除一个字符、替换一个字符。\n\n**示例**\n```\n输入: word1 = \"horse\", word2 = \"ros\"\n输出: 3\n```",
+  "tests": [
+   {
+    "args": [
+     "horse",
+     "ros"
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     "intention",
+     "execution"
+    ],
+    "expected": 5
+   }
+  ]
+ },
+ "single-number": {
+  "fn": "singleNumber",
+  "sig": "def singleNumber(self, nums: List[int]) -> int:",
+  "desc": "给你一个**非空**整数数组 `nums`，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。你必须设计并实现线性时间复杂度的算法，且不使用额外空间。\n\n**示例**\n```\n输入: nums = [2,2,1]\n输出: 1\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      2,
+      2,
+      1
+     ]
+    ],
+    "expected": 1
+   },
+   {
+    "args": [
+     [
+      4,
+      1,
+      2,
+      1,
+      2
+     ]
+    ],
+    "expected": 4
+   },
+   {
+    "args": [
+     [
+      1
+     ]
+    ],
+    "expected": 1
+   }
+  ]
+ },
+ "majority-element": {
+  "fn": "majorityElement",
+  "sig": "def majorityElement(self, nums: List[int]) -> int:",
+  "desc": "给定一个大小为 `n` 的数组 `nums`，返回其中的多数元素。多数元素是指在数组中出现次数**大于** `⌊ n/2 ⌋` 的元素。你可以假设数组是非空的，并且给定的数组总是存在多数元素。\n\n**示例**\n```\n输入: nums = [3,2,3]\n输出: 3\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      3,
+      2,
+      3
+     ]
+    ],
+    "expected": 3
+   },
+   {
+    "args": [
+     [
+      2,
+      2,
+      1,
+      1,
+      1,
+      2,
+      2
+     ]
+    ],
+    "expected": 2
+   }
+  ]
+ },
+ "sort-colors": {
+  "fn": "sortColors",
+  "sig": "def sortColors(self, nums: List[int]) -> None:",
+  "inplace": true,
+  "desc": "给定一个包含红色、白色和蓝色、共 `n` 个元素的数组 `nums`，**原地**对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。我们使用整数 `0`、`1` 和 `2` 分别表示红色、白色和蓝色。**原地修改**，不要返回值，不要使用库函数排序。\n\n**示例**\n```\n输入: nums = [2,0,2,1,1,0]\n输出: [0,0,1,1,2,2]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      2,
+      0,
+      2,
+      1,
+      1,
+      0
+     ]
+    ],
+    "expected": [
+     0,
+     0,
+     1,
+     1,
+     2,
+     2
+    ]
+   },
+   {
+    "args": [
+     [
+      2,
+      0,
+      1
+     ]
+    ],
+    "expected": [
+     0,
+     1,
+     2
+    ]
+   },
+   {
+    "args": [
+     [
+      0
+     ]
+    ],
+    "expected": [
+     0
+    ]
+   }
+  ]
+ },
+ "next-permutation": {
+  "fn": "nextPermutation",
+  "sig": "def nextPermutation(self, nums: List[int]) -> None:",
+  "inplace": true,
+  "desc": "整数数组的一个**排列**就是将其所有成员以序列或线性顺序排列。整数数组的**下一个排列**是指其整数的下一个字典序更大的排列。如果不存在下一个更大的排列，则将数字重新排列成最小的排列（即升序排列）。必须**原地**修改，不要返回值。\n\n**示例**\n```\n输入: nums = [1,2,3]\n输出: [1,3,2]\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      2,
+      3
+     ]
+    ],
+    "expected": [
+     1,
+     3,
+     2
+    ]
+   },
+   {
+    "args": [
+     [
+      3,
+      2,
+      1
+     ]
+    ],
+    "expected": [
+     1,
+     2,
+     3
+    ]
+   },
+   {
+    "args": [
+     [
+      1,
+      1,
+      5
+     ]
+    ],
+    "expected": [
+     1,
+     5,
+     1
+    ]
+   }
+  ]
+ },
+ "find-the-duplicate-number": {
+  "fn": "findDuplicate",
+  "sig": "def findDuplicate(self, nums: List[int]) -> int:",
+  "desc": "给定一个包含 `n + 1` 个整数的数组 `nums`，其数字都在 `[1, n]` 范围内（包括 1 和 n），可知至少存在一个重复的整数。假设 `nums` 只有**一个重复的整数**，返回这个重复的数。你设计的解决方案必须**不修改**数组 `nums` 且只用常量级 O(1) 的额外空间。\n\n**示例**\n```\n输入: nums = [1,3,4,2,2]\n输出: 2\n```",
+  "tests": [
+   {
+    "args": [
+     [
+      1,
+      3,
+      4,
+      2,
+      2
+     ]
+    ],
+    "expected": 2
+   },
+   {
+    "args": [
+     [
+      3,
+      1,
+      3,
+      4,
+      2
+     ]
+    ],
+    "expected": 3
+   }
+  ]
+ }
+}

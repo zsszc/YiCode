@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDashboard } from '@/hooks/useDashboard'
 import { useQuery } from '@tanstack/react-query'
@@ -10,7 +9,6 @@ import type { DashboardItem } from '@/types'
 export default function DashboardPage() {
   const { data, isLoading, error } = useDashboard()
   const queryClient = useQueryClient()
-  const [undoId, setUndoId] = useState<number | null>(null)
 
   const { data: adaptive } = useQuery({
     queryKey: ['adaptive'],
@@ -44,19 +42,19 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex gap-2 text-sm">
-          <StatBadge label="未刷" count={data.counts.todo} color="bg-gray-100 text-gray-600" />
-          <StatBadge label="遗忘" count={data.counts.forgot} color="bg-red-50 text-red-600" />
-          <StatBadge label="磕绊" count={data.counts.shaky} color="bg-yellow-50 text-yellow-600" />
-          <StatBadge label="稳固" count={data.counts.solid} color="bg-green-50 text-green-600" />
-          <StatBadge label="归档" count={data.counts.archived} color="bg-blue-50 text-blue-600" />
+          <StatBadge label="未刷" count={data.counts.todo} color="bg-surface-raised text-journal-muted border border-line" />
+          <StatBadge label="遗忘" count={data.counts.forgot} color="bg-hard/10 text-hard border border-hard/25" />
+          <StatBadge label="磕绊" count={data.counts.shaky} color="bg-medium/10 text-medium border border-medium/25" />
+          <StatBadge label="稳固" count={data.counts.solid} color="bg-easy/10 text-easy border border-easy/25" />
+          <StatBadge label="归档" count={data.counts.archived} color="bg-brand/10 text-brand-light border border-brand/25" />
         </div>
       </div>
 
       {/* AI 自适应建议 + 连续打卡 */}
       {adaptive && (
         <div className="grid gap-3 sm:grid-cols-2">
-          <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-3">
-            <div className="flex items-center gap-1.5 text-sm font-medium text-orange-800">
+          <div className="rounded-lg border border-medium/25 bg-medium/10 px-4 py-3">
+            <div className="flex items-center gap-1.5 text-sm font-medium text-medium">
               <Flame size={16} className="text-orange-500" />
               连续打卡 {adaptive.profile.streak_days} 天
               {adaptive.profile.streak_days >= 7 && <span className="text-xs">🔥 保持住！</span>}
@@ -73,8 +71,8 @@ export default function DashboardPage() {
 
       {/* 昨日空档提示 */}
       {data.skipped_yesterday && (
-        <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3">
-          <p className="text-sm text-yellow-800">
+        <div className="rounded-lg border border-medium/25 bg-medium/10 px-4 py-3">
+          <p className="text-sm text-medium">
             昨天有 {data.skipped_yesterday.review_count} 道复习题到期但没做，
             <button onClick={handleShiftForward} className="ml-1 underline font-medium hover:text-yellow-900">
               全部顺延到今天 →
@@ -141,14 +139,14 @@ function ProblemCard({
   onReview?: (id: number, score: 'easy' | 'ok' | 'hard') => void
 }) {
   const diffColor = {
-    简单: 'bg-green-100 text-green-700',
-    中等: 'bg-yellow-100 text-yellow-700',
-    困难: 'bg-red-100 text-red-700',
-  }[item.difficulty] || 'bg-gray-100 text-gray-700'
+    简单: 'bg-easy/10 text-easy border border-easy/25',
+    中等: 'bg-medium/10 text-medium border border-medium/25',
+    困难: 'bg-hard/10 text-hard border border-hard/25',
+  }[item.difficulty] || 'bg-surface-raised text-journal-muted border border-line'
 
   return (
     <div className={`rounded-xl border bg-journal-paper p-4 shadow-sm transition-shadow hover:shadow-md ${
-      item.is_overdue ? 'border-red-300' : 'border-journal-accentLight/40'
+      item.is_overdue ? 'border-hard/50' : 'border-line'
     }`}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
@@ -175,19 +173,19 @@ function ProblemCard({
         <div className="mt-3 flex gap-2">
           <button
             onClick={() => onReview(item.id, 'easy')}
-            className="flex-1 rounded-lg bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 transition-colors hover:bg-green-100"
+            className="flex-1 rounded-lg bg-easy/10 px-3 py-1.5 text-xs font-medium text-easy transition-colors hover:bg-easy/20"
           >
             😄 秒A
           </button>
           <button
             onClick={() => onReview(item.id, 'ok')}
-            className="flex-1 rounded-lg bg-yellow-50 px-3 py-1.5 text-xs font-medium text-yellow-700 transition-colors hover:bg-yellow-100"
+            className="flex-1 rounded-lg bg-medium/10 px-3 py-1.5 text-xs font-medium text-medium transition-colors hover:bg-medium/20"
           >
             🙂 磕绊
           </button>
           <button
             onClick={() => onReview(item.id, 'hard')}
-            className="flex-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 transition-colors hover:bg-red-100"
+            className="flex-1 rounded-lg bg-hard/10 px-3 py-1.5 text-xs font-medium text-hard transition-colors hover:bg-hard/20"
           >
             😩 卡住
           </button>
@@ -206,7 +204,7 @@ function ProblemCard({
           </a>
           <Link
             to={`/problems/${item.id}`}
-            className="inline-flex items-center gap-1 rounded-lg bg-gray-50 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-100"
+            className="inline-flex items-center gap-1 rounded-lg bg-brand-dim px-3 py-1.5 text-xs font-medium text-brand-light transition-colors hover:bg-brand/30"
           >
             AI 辅导
           </Link>

@@ -12,7 +12,7 @@ class UserBehavior(Base):
     __tablename__ = "user_behaviors"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, default=1)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     problem_id = Column(Integer, ForeignKey("problems.id"), nullable=False)
     action_type = Column(String, nullable=False)
     # JSON 格式存储额外数据: {"hint_level": 1, "solve_time_ms": 300000, "code_length": 150}

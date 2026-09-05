@@ -7,6 +7,14 @@ import type {
   CodeReviewResponse,
   LearningProfile,
   AdaptiveRecommendation,
+  ChatMsg,
+  ChatResponse,
+  CodeRunResponse,
+  RunTestsResponse,
+  Diagnostic,
+  CompleteResponse,
+  TemplateSummary,
+  TemplateDetail,
 } from '@/types'
 
 const api = axios.create({
@@ -62,6 +70,105 @@ export const tutorApi = {
     }).then(r => r.data),
   logs: (limit: number = 20) =>
     api.get('/tutor/logs', { params: { limit } }).then(r => r.data),
+  chat: (problemId: number | null, message: string, history: ChatMsg[], userCode?: string) =>
+    api.post<ChatResponse>('/tutor/chat', {
+      problem_id: problemId,
+      message,
+      history,
+      user_code: userCode,
+    }).then(r => r.data),
+  /** SSE 流式聊天：每收到一段文本回调一次 onChunk，出错抛异常 */
+  chatStream: async (
+    problemId: number | null,
+    message: string,
+    history: ChatMsg[],
+    userCode: string | undefined,
+    onChunk: (text: string) => void,
+  ): Promise<void> => {
+    await readSSE('/api/v1/tutor/chat-stream', onChunk, {
+      method: 'POST',
+      body: JSON.stringify({
+        problem_id: problemId,
+        message,
+        history,
+        user_code: userCode,
+      }),
+    })
+  },
+  /** SSE 流式提示：GET 接口，打字机渲染 */
+  hintStream: async (
+    problemId: number,
+    level: number,
+    onChunk: (text: string) => void,
+  ): Promise<void> => {
+    await readSSE(`/api/v1/tutor/hint-stream/${problemId}?level=${level}`, onChunk)
+  },
+}
+
+// Phase 5: 在线代码运行 / 判题
+export const codeApi = {
+  run: (code: string, stdin?: string) =>
+    api.post<CodeRunResponse>('/code/run', { code, stdin }).then(r => r.data),
+  runTests: (problemId: number, code: string) =>
+    api.post<RunTestsResponse>('/code/run-tests', { problem_id: problemId, code }).then(r => r.data),
+  /** 静态诊断：波浪线数据源 */
+  lint: (code: string) =>
+    api.post<{ diagnostics: Diagnostic[] }>('/code/lint', { code }).then(r => r.data.diagnostics),
+  /** AI 内联补全 */
+  complete: (code: string, cursorLine: number, cursorCol: number, problemId?: number) =>
+    api.post<CompleteResponse>('/code/complete', {
+      code,
+      cursor_line: cursorLine,
+      cursor_col: cursorCol,
+      problem_id: problemId,
+    }).then(r => r.data.completion),
+}
+
+// Phase 6: 模板刷题（面试背诵模式）
+export const templatesApi = {
+  list: () => api.get<TemplateSummary[]>('/templates').then(r => r.data),
+  get: (slug: string) => api.get<TemplateDetail>(`/templates/${slug}`).then(r => r.data),
+}
+
+/** 通用 SSE 流读取器：逐段回调文本，遇错误帧抛错 */
+export async function readSSE(
+  url: string,
+  onChunk: (text: string) => void,
+  init?: RequestInit,
+): Promise<void> {
+  const token = localStorage.getItem('yicode_token')
+  const resp = await fetch(url, {
+    ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(init?.headers ?? {}),
+    },
+  })
+  if (!resp.ok || !resp.body) {
+    throw new Error(`请求失败 (${resp.status})，请确认后端服务已启动`)
+  }
+  const reader = resp.body.getReader()
+  const decoder = new TextDecoder()
+  let buffer = ''
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    buffer += decoder.decode(value, { stream: true })
+    const events = buffer.split('\n\n')
+    buffer = events.pop() ?? ''
+    for (const ev of events) {
+      const line = ev.split('\n').find(l => l.startsWith('data: '))
+      if (!line) continue
+      const payload = line.slice(6)
+      if (payload === '[DONE]') return
+      const parsed = JSON.parse(payload)
+      if (parsed && typeof parsed === 'object' && 'error' in parsed) {
+        throw new Error(parsed.error)
+      }
+      onChunk(parsed)
+    }
+  }
 }
 
 // Phase 2: Learning Profile

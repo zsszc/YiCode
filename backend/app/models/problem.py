@@ -15,6 +15,11 @@ class Problem(Base):
     )
     category = Column(String, nullable=False)
     leetcode_url = Column(String, nullable=True)
+    # 站内刷题内容（Phase 5）
+    description = Column(Text, nullable=True)          # Markdown 题面描述
+    starter_code = Column(Text, nullable=True)         # 代码模板
+    test_cases = Column(Text, nullable=True)           # JSON: [{"args": [...], "expected": ...}]
+    function_name = Column(String, nullable=True)      # Solution 类中的方法名
     is_custom = Column(Boolean, default=False, nullable=False)
     deleted = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, server_default=func.now())

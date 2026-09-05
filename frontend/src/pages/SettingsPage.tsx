@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Settings, Flame, Brain, Target, TrendingUp } from 'lucide-react'
 import { profileApi } from '@/services/api'
@@ -115,7 +114,7 @@ export default function SettingsPage() {
             <select
               value={profile.preferred_difficulty}
               onChange={e => updateMutation.mutate({ preferred_difficulty: e.target.value })}
-              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-journal-accent focus:outline-none"
+              className="w-full rounded-lg border border-line bg-journal-bg px-3 py-2 text-sm text-journal-ink focus:border-brand focus:outline-none"
             >
               <option value="easy">优先简单题</option>
               <option value="balanced">均衡分布</option>
@@ -131,7 +130,7 @@ export default function SettingsPage() {
             <button
               onClick={() => updateMutation.mutate({ adaptive_quota_enabled: !profile.adaptive_quota_enabled })}
               className={`relative h-6 w-11 rounded-full transition-colors ${
-                profile.adaptive_quota_enabled ? 'bg-journal-accent' : 'bg-gray-300'
+                profile.adaptive_quota_enabled ? 'bg-brand' : 'bg-surface-hover'
               }`}
             >
               <span
@@ -151,7 +150,7 @@ export default function SettingsPage() {
                 max={20}
                 value={profile.custom_quota_weekday || 3}
                 onChange={e => updateMutation.mutate({ custom_quota_weekday: Number(e.target.value) })}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-journal-accent focus:outline-none"
+                className="w-full rounded-lg border border-line bg-journal-bg px-3 py-2 text-sm text-journal-ink focus:border-brand focus:outline-none"
               />
             </div>
             <div>
@@ -162,7 +161,7 @@ export default function SettingsPage() {
                 max={20}
                 value={profile.custom_quota_weekend || 6}
                 onChange={e => updateMutation.mutate({ custom_quota_weekend: Number(e.target.value) })}
-                className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-journal-accent focus:outline-none"
+                className="w-full rounded-lg border border-line bg-journal-bg px-3 py-2 text-sm text-journal-ink focus:border-brand focus:outline-none"
               />
             </div>
           </div>

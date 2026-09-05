@@ -5,6 +5,7 @@ AI Tutor API Router — Phase 2 + Phase 4 SSE
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
+import json
 
 from app.dependencies import get_db
 from app.services import AITutorService
@@ -13,6 +14,8 @@ from app.schemas.tutor import (
     HintResponse,
     CodeReviewRequest,
     CodeReviewResponse,
+    ChatRequest,
+    ChatResponse,
     TutorLogItem,
 )
 
@@ -49,7 +52,7 @@ async def get_hint_stream(
 
     async def event_generator():
         async for chunk in service.generate_hint_stream(problem_id=problem_id, level=level):
-            yield f"data: {chunk}\n\n"
+            yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
         yield "data: [DONE]\n\n"
 
     return StreamingResponse(
@@ -83,6 +86,58 @@ async def review_code(req: CodeReviewRequest, db: Session = Depends(get_db)):
         "tokens_used": result.tokens_used,
         "latency_ms": result.latency_ms,
     }
+
+
+@router.post("/chat", response_model=ChatResponse)
+async def chat(req: ChatRequest, db: Session = Depends(get_db)):
+    """AI Tutor 自由对话：携带题目上下文、历史消息与用户当前代码。"""
+    service = AITutorService(db)
+    try:
+        result = await service.chat(
+            problem_id=req.problem_id,
+            message=req.message,
+            history=[h.model_dump() for h in req.history],
+            user_code=req.user_code,
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    return {
+        "reply": result.content,
+        "tokens_used": result.tokens_used,
+        "latency_ms": result.latency_ms,
+    }
+
+
+@router.post("/chat-stream")
+async def chat_stream(req: ChatRequest, db: Session = Depends(get_db)):
+    """SSE 流式自由对话：逐段返回 AI 回复，前端打字机渲染。"""
+    service = AITutorService(db)
+
+    async def event_generator():
+        try:
+            async for chunk in service.chat_stream(
+                problem_id=req.problem_id,
+                message=req.message,
+                history=[h.model_dump() for h in req.history],
+                user_code=req.user_code,
+            ):
+                # JSON 编码避免换行/特殊字符破坏 SSE 行格式
+                yield f"data: {json.dumps(chunk, ensure_ascii=False)}\n\n"
+        except ValueError as e:
+            yield f"data: {json.dumps({'error': str(e)}, ensure_ascii=False)}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'error': f'AI 服务异常: {e}'}, ensure_ascii=False)}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @router.get("/logs", response_model=list[TutorLogItem])

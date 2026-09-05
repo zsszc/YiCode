@@ -11,8 +11,8 @@ SOLUTIONS_DIR = ROOT.parent / "solutions"
 class Settings(BaseSettings):
     """应用配置，支持 .env 文件覆盖。"""
 
-    # 数据库 (默认内存，生产通过 .env 覆盖为文件路径)
-    database_url: str = "sqlite:///:memory:"
+    # 数据库 (默认使用 data/yicode.db 文件，保证重启不丢数据；生产可通过 .env 覆盖)
+    database_url: str = "sqlite:///" + (DATA_DIR / "yicode.db").as_posix()
 
     # API
     api_v1_prefix: str = "/api/v1"
@@ -24,8 +24,7 @@ class Settings(BaseSettings):
     access_token_expire_days: int = 7
 
     # CORS（逗号分隔多个来源）
-    cors_origins: str = "http://localhost:5173,http://localhost:3000"
-    cors_origins: list[str] = ["http://localhost:5173", "http://localhost:3000"]
+    cors_origins: str = "http://localhost:5173,http://localhost:3000,http://localhost:7100"
 
     # SM-2 默认配置
     review_intervals_days: list[int] = [1, 3, 7, 15, 30]

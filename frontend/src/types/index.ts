@@ -8,6 +8,49 @@ export interface Problem {
   status?: string
   next_review?: string
   note?: string
+  description?: string
+  starter_code?: string
+  function_name?: string
+  test_cases?: string
+}
+
+// AI Tutor 对话
+export interface ChatMsg {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+export interface ChatResponse {
+  reply: string
+  tokens_used: number
+  latency_ms: number
+}
+
+// 代码运行 / 判题
+export interface CodeRunResponse {
+  stdout: string
+  stderr: string
+  exit_code: number
+  duration_ms: number
+  timed_out: boolean
+}
+
+export interface JudgeCase {
+  input: string
+  expected: string
+  actual: string
+  ok: boolean
+}
+
+export interface RunTestsResponse {
+  passed: number
+  total: number
+  cases: JudgeCase[]
+  stdout: string
+  stderr: string
+  duration_ms: number
+  timed_out: boolean
+  sandbox_blocked: boolean
 }
 
 export interface DashboardData {
@@ -109,4 +152,31 @@ export interface AdaptiveRecommendation {
     first_try_success_rate: number
     preferred_difficulty: string
   }
+}
+
+// Phase 6: 代码诊断 / AI 补全 / 模板刷题
+export interface Diagnostic {
+  line: number
+  col: number
+  end_line: number
+  end_col: number
+  severity: 'error' | 'warning' | 'info'
+  message: string
+}
+
+export interface CompleteResponse {
+  completion: string
+}
+
+export interface TemplateSummary {
+  slug: string
+  name: string
+  scenario: string
+  mnemonic: string
+  problem_ids: number[]
+}
+
+export interface TemplateDetail extends TemplateSummary {
+  code: string
+  key_points: string[]
 }

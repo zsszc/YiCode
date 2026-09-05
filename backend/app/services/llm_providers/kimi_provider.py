@@ -42,6 +42,33 @@ REVIEW_SYSTEM_PROMPT = """你是一位代码审查专家。请审查以下 LeetC
   "overall_comment": "总体评价"
 }"""
 
+CHAT_SYSTEM_PROMPT = """你是一位耐心、循循善诱的算法刷题导师（苏格拉底式教学）。
+规则：
+1. 用中文回答，语气温和鼓励
+2. 不直接给出完整 AC 代码；通过提问、提示、小步引导帮助用户自己想到解法
+3. 用户贴了代码时，可以指出具体问题所在，但优先给方向而不是改好的代码
+4. 回答简洁，适当使用 Markdown（代码块、列表）"""
+
+
+def _build_chat_messages(problem, message: str, history: list[dict], user_code: Optional[str]) -> list[dict]:
+    """构建自由对话的 messages（含题目上下文与用户当前代码）。"""
+    context = ""
+    if problem:
+        context = f"题目: {problem.title}\n难度: {problem.difficulty}\n分类: {problem.category}\n"
+        if getattr(problem, "description", None):
+            context += f"题面:\n{problem.description[:1500]}\n"
+    if user_code:
+        context += f"\n用户当前编辑器中的代码:\n```python\n{user_code[:3000]}\n```"
+
+    messages = [{"role": "system", "content": CHAT_SYSTEM_PROMPT}]
+    for h in (history or [])[-10:]:
+        role = h.get("role")
+        if role in ("user", "assistant") and h.get("content"):
+            messages.append({"role": role, "content": h["content"][:2000]})
+    user_msg = f"{context}\n用户提问: {message}" if context else message
+    messages.append({"role": "user", "content": user_msg})
+    return messages
+
 
 def _build_hint_messages(problem, level: int, user_code: Optional[str], profile) -> list[dict]:
     """构建 hint 请求的 messages。"""
@@ -82,7 +109,7 @@ async def _stream_chat(base_url: str, api_key: str, model: str, messages: list, 
                 "model": model,
                 "messages": messages,
                 "max_tokens": max_tokens,
-                "temperature": temperature,
+                # kimi-for-coding 为 reasoning 模型，仅允许 temperature=1，省略即默认
                 "stream": True,
             },
         ) as resp:
@@ -139,7 +166,6 @@ class KimiProvider(BaseLLMProvider):
                     "model": self.model,
                     "messages": messages,
                     "max_tokens": self.max_tokens,
-                    "temperature": self.temperature,
                 },
             )
             resp.raise_for_status()
@@ -186,7 +212,6 @@ class KimiProvider(BaseLLMProvider):
                     "model": self.model,
                     "messages": messages,
                     "max_tokens": self.max_tokens,
-                    "temperature": 0.3,  # review 用较低 temperature
                 },
             )
             resp.raise_for_status()
@@ -201,6 +226,52 @@ class KimiProvider(BaseLLMProvider):
         result.tokens_used = tokens
         result.latency_ms = latency
         return result
+
+    async def chat(
+        self,
+        problem,
+        message: str,
+        history: list[dict],
+        user_code: Optional[str] = None,
+    ) -> HintResult:
+        """自由对话（非流式）。"""
+        start = time.time()
+        messages = _build_chat_messages(problem, message, history, user_code)
+
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            resp = await client.post(
+                f"{self.base_url}/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": self.model,
+                    "messages": messages,
+                    "max_tokens": self.max_tokens,
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+
+        content = data["choices"][0]["message"]["content"]
+        tokens = data.get("usage", {}).get("total_tokens", 0)
+        latency = int((time.time() - start) * 1000)
+        return HintResult(content=content, tokens_used=tokens, latency_ms=latency)
+    async def chat_stream(
+        self,
+        problem,
+        message: str,
+        history: list[dict],
+        user_code: Optional[str] = None,
+    ):
+        """流式自由对话。"""
+        messages = _build_chat_messages(problem, message, history, user_code)
+        async for chunk in _stream_chat(
+            self.base_url, self.api_key, self.model,
+            messages, self.timeout, self.max_tokens, self.temperature,
+        ):
+            yield chunk
 
 
 def _parse_review_json(raw: str) -> CodeReviewResult:

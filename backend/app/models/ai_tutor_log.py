@@ -12,7 +12,7 @@ class AITutorLog(Base):
     __tablename__ = "ai_tutor_logs"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, default=1)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     problem_id = Column(Integer, ForeignKey("problems.id"), nullable=True)
     request_type = Column(String, nullable=False)
     prompt = Column(Text, default="", nullable=False)
@@ -23,7 +23,7 @@ class AITutorLog(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "request_type IN ('hint','review_code')",
+            "request_type IN ('hint','review_code','chat')",
             name="ck_ai_tutor_log_request_type",
         ),
     )

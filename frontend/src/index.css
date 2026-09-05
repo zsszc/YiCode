@@ -3,7 +3,160 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-journal-bg text-journal-ink;
+  html {
+    color-scheme: dark;
   }
+  body {
+    @apply bg-journal-bg text-journal-ink font-sans antialiased;
+  }
+  ::selection {
+    background: rgba(124, 108, 240, 0.35);
+  }
+}
+
+/* 细滚动条 */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: #2a3045;
+  border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #3a4260;
+}
+
+/* Markdown 内容排版（题面 / AI 回复） */
+.prose-dark {
+  @apply text-sm leading-6 text-journal-ink;
+}
+.prose-dark p {
+  @apply my-2;
+}
+.prose-dark strong {
+  @apply text-white font-semibold;
+}
+.prose-dark code {
+  @apply rounded bg-black/40 px-1.5 py-0.5 font-mono text-[0.85em] text-brand-light;
+}
+.prose-dark pre {
+  @apply my-3 overflow-x-auto rounded-lg border border-line bg-black/50 p-3;
+}
+.prose-dark pre code {
+  @apply bg-transparent p-0 text-journal-ink;
+}
+.prose-dark ul, .prose-dark ol {
+  @apply my-2 pl-5;
+}
+.prose-dark ul {
+  @apply list-disc;
+}
+.prose-dark ol {
+  @apply list-decimal;
+}
+.prose-dark blockquote {
+  @apply my-2 border-l-2 border-brand/60 pl-3 text-journal-muted;
+}
+.prose-dark h1, .prose-dark h2, .prose-dark h3 {
+  @apply mt-3 mb-1 font-semibold text-white;
+}
+
+/* CodeMirror 适配深色 */
+.cm-editor {
+  @apply text-sm;
+  background: transparent !important;
+  outline: none !important;
+}
+.cm-editor .cm-gutters {
+  background: transparent !important;
+  border-right: 1px solid #232a3d !important;
+  color: #566080 !important;
+}
+.cm-editor .cm-activeLine {
+  background: rgba(124, 108, 240, 0.07) !important;
+}
+.cm-editor .cm-activeLineGutter {
+  background: rgba(124, 108, 240, 0.12) !important;
+}
+.cm-editor.cm-focused {
+  outline: none !important;
+}
+.cm-editor .cm-cursor {
+  border-left-color: #a99dff !important;
+}
+.cm-editor .cm-selectionBackground, .cm-editor.cm-focused .cm-selectionBackground {
+  background: rgba(124, 108, 240, 0.28) !important;
+}
+
+/* AI 补全 ghost text（幽灵文本） */
+.cm-ai-ghost {
+  color: #5a6484;
+  font-style: italic;
+  opacity: 0.85;
+  white-space: pre;
+  pointer-events: none;
+}
+
+/* lint 波浪线配色（覆盖默认，贴合主题） */
+.cm-editor .cm-lintRange-error {
+  background-image: none !important;
+  text-decoration: underline wavy #f87171 1.5px;
+  text-underline-offset: 3px;
+}
+.cm-editor .cm-lintRange-warning {
+  background-image: none !important;
+  text-decoration: underline wavy #fbbf24 1.5px;
+  text-underline-offset: 3px;
+}
+.cm-editor .cm-lintRange-info {
+  background-image: none !important;
+  text-decoration: underline dotted #60a5fa 1.5px;
+  text-underline-offset: 3px;
+}
+.cm-tooltip.cm-tooltip-lint {
+  background: #1a2030 !important;
+  border: 1px solid #232a3d !important;
+  border-radius: 8px !important;
+  color: #e8eaf2 !important;
+  padding: 6px 10px !important;
+  font-size: 12px !important;
+  max-width: 360px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+}
+.cm-lint-marker {
+  width: 0.9em !important;
+  height: 0.9em !important;
+}
+
+/* 全局氛围背景：顶部紫蓝渐变光晕 */
+body {
+  background-image:
+    radial-gradient(ellipse 60% 40% at 15% -5%, rgba(124, 108, 240, 0.10), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 85% -8%, rgba(79, 142, 247, 0.08), transparent 60%);
+  background-attachment: fixed;
+}
+
+/* 页面切换淡入 */
+main > * {
+  animation: page-in 0.25s ease-out;
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 链接/按钮聚焦环 */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid rgba(124, 108, 240, 0.55);
+  outline-offset: 2px;
 }

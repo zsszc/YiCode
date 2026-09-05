@@ -55,3 +55,30 @@ class BaseLLMProvider:
         language: str,
     ) -> CodeReviewResult:
         raise NotImplementedError
+
+    async def chat(
+        self,
+        problem: Optional["Problem"],
+        message: str,
+        history: list[dict],
+        user_code: Optional[str] = None,
+    ) -> HintResult:
+        """自由对话：结合题目上下文与用户代码回答用户提问。
+
+        history: [{"role": "user"|"assistant", "content": str}, ...]
+        """
+        raise NotImplementedError
+
+    async def chat_stream(
+        self,
+        problem: Optional["Problem"],
+        message: str,
+        history: list[dict],
+        user_code: Optional[str] = None,
+    ):
+        """流式自由对话（异步生成器，yield 字符串片段）。
+
+        默认实现：退化为一次性输出，子类可覆盖为真正的流式。
+        """
+        result = await self.chat(problem, message, history, user_code)
+        yield result.content

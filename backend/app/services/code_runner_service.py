@@ -9,6 +9,7 @@
 """
 
 import ast
+import json
 import subprocess
 import sys
 import tempfile
@@ -72,20 +73,6 @@ class SecurityChecker(ast.NodeVisitor):
             self._add_parents(child, node)
 
     def visit_Import(self, node: ast.Import):
-        """为 AST 节点添加 _parent 引用，辅助判断节点上下文。"""
-        node._parent = parent
-        for child in ast.iter_child_nodes(node):
-            self._add_parents(child, node)
-        """检查代码，返回违规列表（空列表表示安全）。"""
-        self.violations = []
-        try:
-            tree = ast.parse(source)
-            self.visit(tree)
-        except SyntaxError as e:
-            self.violations.append(f"语法错误: {e}")
-        return self.violations
-
-    def visit_Import(self, node: ast.Import):
         for alias in node.names:
             base = alias.name.split(".")[0]
             if base in BANNED_IMPORTS:
@@ -139,18 +126,15 @@ def _wrap_code(user_code: str) -> str:
     """将用户代码包装在安全沙箱中执行。"""
     wrapper = '''
 import builtins
+import traceback as _traceback
 
-# 保存 __import__ 引用（在删除前先保存）
+# 保存 __import__ 与堆栈引用
 _original_import = __import__
+_extract_stack = _traceback.extract_stack
 
-# 禁止危险内置函数
-_banned_builtins = ''' + repr(BANNED_BUILTINS) + '''
-for name in _banned_builtins:
-    if name in dir(builtins):
-        try:
-            delattr(builtins, name)
-        except AttributeError:
-            pass
+# 说明：eval/exec/compile/open 等危险内置由 AST 静态分析在用户代码层面拦截。
+# 不能在运行时从 builtins 中删除它们——Python 的 import 机制底层依赖 exec/open，
+# 删除后任何模块导入都会失败。因此运行时只劫持 __import__。
 
 # 禁止危险模块导入
 _banned_modules = ''' + repr(BANNED_IMPORTS) + '''
@@ -158,7 +142,11 @@ _banned_modules = ''' + repr(BANNED_IMPORTS) + '''
 def _safe_import(name, *args, **kwargs):
     base = name.split('.')[0]
     if base in _banned_modules:
-        raise ImportError(f"Module '{base}' is not allowed in sandbox")
+        # 只拦截用户代码直接发起的导入；
+        # 标准库内部的传递导入（如 json -> re -> enum -> sys）放行
+        for _fr in _extract_stack():
+            if _fr.filename == __file__ and _fr.name != '_safe_import':
+                raise ImportError(f"Module '{base}' is not allowed in sandbox")
     return _original_import(name, *args, **kwargs)
 
 builtins.__import__ = _safe_import
@@ -263,3 +251,305 @@ def run_python_code(
             os.unlink(temp_path)
         except OSError:
             pass
+
+
+# ========== 在线判题（运行测试用例） ==========
+
+_JUDGE_HARNESS = r"""
+import json as _json
+
+class _LNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class _TNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+_ctx = {}
+
+def _build_linked(vals):
+    head = None
+    tail = None
+    nodes = []
+    for v in vals:
+        n = _LNode(v)
+        nodes.append(n)
+        if head is None:
+            head = n
+        else:
+            tail.next = n
+        tail = n
+    _ctx['list_nodes'] = nodes
+    return head
+
+def _build_cycle(vals, pos):
+    head = _build_linked(vals)
+    nodes = _ctx['list_nodes']
+    if nodes and 0 <= pos < len(nodes):
+        nodes[-1].next = nodes[pos]
+    return head
+
+def _build_tree(vals):
+    if not vals:
+        return None
+    nodes = [_TNode(v) if v is not None else None for v in vals]
+    _ctx['tree_nodes'] = [n for n in nodes if n is not None]
+    kids = nodes[1:]
+    for node in nodes:
+        if node is not None and kids:
+            node.left = kids.pop(0)
+            if kids:
+                node.right = kids.pop(0)
+    return nodes[0]
+
+def _build_intersect(spec):
+    headA = _build_linked(spec['ilistA'])
+    nodesA = list(_ctx['list_nodes'])
+    skipA = spec.get('skipA', 0)
+    skipB = spec.get('skipB', 0)
+    bvals = spec['ilistB'][:skipB]
+    headB = _build_linked(bvals)
+    nodesB = list(_ctx['list_nodes'])
+    if 0 <= skipA < len(nodesA):
+        if nodesB:
+            nodesB[-1].next = nodesA[skipA]
+        else:
+            headB = nodesA[skipA]
+    return headA, headB
+
+def _ser(x):
+    if x is None:
+        return None
+    if hasattr(x, 'left') or hasattr(x, 'right'):
+        out = []
+        q = [x]
+        while q:
+            n = q.pop(0)
+            if n is None:
+                out.append(None)
+            else:
+                out.append(n.val)
+                q.append(n.left)
+                q.append(n.right)
+        while out and out[-1] is None:
+            out.pop()
+        return out
+    if hasattr(x, 'val') or hasattr(x, 'next'):
+        out = []
+        seen = set()
+        while x is not None:
+            if id(x) in seen:
+                break
+            seen.add(id(x))
+            out.append(x.val)
+            x = x.next
+        return out
+    return x
+
+def _norm(x):
+    if isinstance(x, list):
+        return sorted((_norm(i) for i in x), key=repr)
+    return x
+
+_UNORD = __UNORD__
+_EPS = __EPS__
+_INPLACE = __INPLACE__
+_FN = __FN__
+_DESIGN = __DESIGN__
+_TESTS = _json.loads(__TESTS_JSON__)
+
+def _close(a, b):
+    try:
+        return abs(float(a) - float(b)) < 1e-5
+    except (TypeError, ValueError):
+        return False
+
+def _eq(got, exp):
+    if _EPS and isinstance(exp, (int, float)) and not isinstance(exp, bool):
+        return _close(got, exp)
+    if _EPS and isinstance(exp, list):
+        if not isinstance(got, list) or len(got) != len(exp):
+            return False
+        return all(_eq(g, e) for g, e in zip(got, exp))
+    if _UNORD and isinstance(got, list) and isinstance(exp, list):
+        return _norm(got) == _norm(exp)
+    return got == exp
+
+def _build_arg(a):
+    if isinstance(a, dict):
+        if 'ilistA' in a:
+            return _build_intersect(a)
+        if 'list' in a:
+            return _build_linked(a['list'] or [])
+        if 'clist' in a:
+            return _build_cycle(a['clist'] or [], a.get('pos', -1))
+        if 'lists' in a:
+            return [_build_linked(v or []) for v in a['lists']]
+        if 'tree' in a:
+            return _build_tree(a['tree'] or [])
+        if 'tval' in a:
+            for n in _ctx.get('tree_nodes', []):
+                if n.val == a['tval']:
+                    return n
+            return None
+    return a
+
+def _check_expected(exp, got):
+    if isinstance(exp, dict):
+        if 'list' in exp:
+            gv = _ser(got)
+            return _eq(gv if gv is not None else [], exp['list'] or [])
+        if 'tree' in exp:
+            gv = _ser(got)
+            return _eq(gv if gv is not None else [], exp['tree'] or [])
+        if 'cpos' in exp:
+            pos = exp['cpos']
+            nodes = _ctx.get('list_nodes', [])
+            want = nodes[pos] if 0 <= pos < len(nodes) else None
+            return got is want
+        if 'tval' in exp:
+            return got is not None and hasattr(got, 'val') and got.val == exp['tval']
+    return _eq(got, exp)
+
+def _display(v):
+    v = _ser(v)
+    try:
+        return _json.dumps(v, ensure_ascii=False)
+    except TypeError:
+        return repr(v)
+
+_results = []
+
+if _DESIGN:
+    cls = globals()[_DESIGN['cls']]
+    for case in _TESTS:
+        obj = cls(*_DESIGN.get('init', []))
+        got_list = []
+        error = None
+        try:
+            for op, opargs in zip(case['ops'], case['opargs']):
+                got_list.append(obj.__class__.__dict__[op](obj, *opargs))
+        except Exception as e:
+            error = f"{type(e).__name__}: {e}"
+        exp_list = case['expected']
+        ok = error is None and len(got_list) == len(exp_list) and all(
+            (e is None and g is None) or _eq(g, e) for g, e in zip(got_list, exp_list)
+        )
+        _results.append({
+            'input': _json.dumps({'ops': case['ops'], 'opargs': case['opargs']}, ensure_ascii=False),
+            'expected': _json.dumps(exp_list, ensure_ascii=False),
+            'actual': error or _json.dumps(got_list, ensure_ascii=False, default=str),
+            'ok': ok,
+        })
+else:
+    for case in _TESTS:
+        args = []
+        for a in case['args']:
+            built = _build_arg(a)
+            if isinstance(built, tuple):
+                args.extend(built)
+            else:
+                args.append(built)
+        try:
+            got = Solution.__dict__[_FN](Solution(), *args)
+            if _INPLACE:
+                got = args[0]
+            ok = _check_expected(case['expected'], got)
+            actual = _display(got)
+        except Exception as e:
+            ok = False
+            actual = f"{type(e).__name__}: {e}"
+        _results.append({
+            'input': _json.dumps(case['args'], ensure_ascii=False),
+            'expected': _json.dumps(case['expected'], ensure_ascii=False),
+            'actual': actual,
+            'ok': ok,
+        })
+
+print("__JUDGE__" + _json.dumps(_results, ensure_ascii=False))
+"""
+
+
+def build_judge_script(user_code: str, function_name: str, spec: dict) -> str:
+    """拼接用户代码与判题 harness，生成可执行脚本。"""
+    harness = (
+        _JUDGE_HARNESS
+        .replace("__UNORD__", repr(bool(spec.get("unord"))))
+        .replace("__EPS__", repr(bool(spec.get("eps"))))
+        .replace("__INPLACE__", repr(bool(spec.get("inplace"))))
+        .replace("__FN__", repr(function_name))
+        .replace("__DESIGN__", repr(spec.get("design")))
+        .replace("__TESTS_JSON__", repr(json.dumps(spec.get("tests", []), ensure_ascii=False)))
+    )
+    return user_code + "\n" + harness
+
+
+@dataclass
+class JudgeResult:
+    passed: int
+    total: int
+    cases: list
+    stdout: str
+    stderr: str
+    duration_ms: int
+    timed_out: bool = False
+    sandbox_blocked: bool = False
+
+
+def run_problem_tests(
+    code: str,
+    function_name: str,
+    spec: dict,
+    timeout_seconds: int = 15,
+) -> JudgeResult:
+    """在沙箱中运行用户代码并逐用例判题。"""
+    import json as _json
+
+    if not spec.get("tests"):
+        return JudgeResult(
+            passed=0, total=0, cases=[],
+            stdout="", stderr="本题暂无测试用例", duration_ms=0,
+        )
+
+    script = build_judge_script(code, function_name, spec)
+    result = run_python_code(script, timeout_seconds=timeout_seconds)
+
+    judge_line = None
+    rest_stdout = []
+    for line in result.stdout.splitlines():
+        if line.startswith("__JUDGE__"):
+            judge_line = line[len("__JUDGE__"):]
+        else:
+            rest_stdout.append(line)
+
+    if judge_line is None:
+        return JudgeResult(
+            passed=0,
+            total=len(spec["tests"]),
+            cases=[],
+            stdout="\n".join(rest_stdout),
+            stderr=result.stderr or "判题进程未产生结果（可能存在语法错误或超时）",
+            duration_ms=result.duration_ms,
+            timed_out=result.timed_out,
+            sandbox_blocked=(result.exit_code == -2),
+        )
+
+    try:
+        cases = _json.loads(judge_line)
+    except _json.JSONDecodeError:
+        cases = []
+
+    passed = sum(1 for c in cases if c.get("ok"))
+    return JudgeResult(
+        passed=passed,
+        total=len(cases),
+        cases=cases,
+        stdout="\n".join(rest_stdout),
+        stderr=result.stderr,
+        duration_ms=result.duration_ms,
+        timed_out=result.timed_out,
+    )

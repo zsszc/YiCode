@@ -15,6 +15,7 @@ from app.services.llm_providers.kimi_provider import (
     REVIEW_SYSTEM_PROMPT,
     _build_hint_messages,
     _build_review_messages,
+    _build_chat_messages,
     _parse_review_json,
     _stream_chat,
 )
@@ -121,3 +122,36 @@ class OpenAIProvider(BaseLLMProvider):
         result.tokens_used = tokens
         result.latency_ms = latency
         return result
+
+    async def chat(
+        self,
+        problem,
+        message: str,
+        history: list[dict],
+        user_code: Optional[str] = None,
+    ) -> HintResult:
+        """自由对话（非流式）。"""
+        start = time.time()
+        messages = _build_chat_messages(problem, message, history, user_code)
+
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            resp = await client.post(
+                f"{self.base_url}/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {self.api_key}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": self.model,
+                    "messages": messages,
+                    "max_tokens": self.max_tokens,
+                    "temperature": self.temperature,
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+
+        content = data["choices"][0]["message"]["content"]
+        tokens = data.get("usage", {}).get("total_tokens", 0)
+        latency = int((time.time() - start) * 1000)
+        return HintResult(content=content, tokens_used=tokens, latency_ms=latency)

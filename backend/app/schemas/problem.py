@@ -20,6 +20,10 @@ class ProblemOut(ProblemBase):
 
     id: int
     deleted: bool = False
+    description: Optional[str] = None
+    starter_code: Optional[str] = None
+    function_name: Optional[str] = None
+    test_cases: Optional[str] = None
 
 
 class ProblemListItem(BaseModel):

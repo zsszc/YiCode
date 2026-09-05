@@ -88,7 +88,7 @@ export default function LearningCurvePage() {
               value: d.count,
             })),
             itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
-            label: { formatter: '{b}\n{c}题' },
+            label: { formatter: '{b}\n{c}题', color: '#8b93a9' },
           }],
         })
       }

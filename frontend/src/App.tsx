@@ -1,5 +1,5 @@
-import { Routes, Route, Link, Navigate } from 'react-router-dom'
-import { BookOpen, LayoutDashboard, Settings, LogOut, User, TrendingUp } from 'lucide-react'
+import { Routes, Route, Link, Navigate, useLocation } from 'react-router-dom'
+import { BookOpen, BookMarked, LayoutDashboard, Settings, LogOut, User, TrendingUp } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import DashboardPage from './pages/DashboardPage'
 import ProblemsPage from './pages/ProblemsPage'
@@ -7,6 +7,7 @@ import ProblemDetailPage from './pages/ProblemDetailPage'
 import SettingsPage from './pages/SettingsPage'
 import AuthPage from './pages/AuthPage'
 import LearningCurvePage from './pages/LearningCurvePage'
+import TemplatesPage from './pages/TemplatesPage'
 
 function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('yicode_token'))
@@ -43,30 +44,37 @@ function App() {
 
   return (
     <div className="min-h-screen bg-journal-bg">
-      <nav className="sticky top-0 z-50 border-b border-journal-accentLight/50 bg-journal-paper/80 backdrop-blur-sm">
-        <div className="mx-auto max-w-6xl px-4">
+      <nav className="sticky top-0 z-50 border-b border-line bg-journal-bg/85 backdrop-blur-md">
+        <div className="mx-auto max-w-[1600px] px-4">
           <div className="flex h-14 items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 text-journal-primary font-hand font-bold text-lg">
-              <span className="text-2xl">🐇</span>
-              <span>忆码 YiCode</span>
+            <Link to="/" className="group flex items-center gap-2.5">
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand to-[#4f8ef7] text-base shadow-glow transition-transform group-hover:scale-105">
+                🐇
+              </span>
+              <span className="bg-gradient-to-r from-white to-brand-light bg-clip-text text-lg font-bold tracking-wide text-transparent">
+                忆码 YiCode
+              </span>
             </Link>
             <div className="flex items-center gap-1">
-              <NavLink to="/" icon={<LayoutDashboard size={18} />} label="看板" />
-              <NavLink to="/problems" icon={<BookOpen size={18} />} label="题库" />
-              <NavLink to="/learning-curve" icon={<TrendingUp size={18} />} label="曲线" />
-              <NavLink to="/settings" icon={<Settings size={18} />} label="设置" />
+              <NavLink to="/" icon={<LayoutDashboard size={17} />} label="看板" />
+              <NavLink to="/problems" icon={<BookOpen size={17} />} label="题库" />
+              <NavLink to="/templates" icon={<BookMarked size={17} />} label="模板" />
+              <NavLink to="/learning-curve" icon={<TrendingUp size={17} />} label="曲线" />
+              <NavLink to="/settings" icon={<Settings size={17} />} label="设置" />
               {user && (
-                <div className="flex items-center gap-2 ml-2 pl-2 border-l border-gray-200">
-                  <span className="flex items-center gap-1 text-xs text-journal-muted">
-                    <User size={14} />
+                <div className="ml-2 flex items-center gap-2 border-l border-line pl-3">
+                  <span className="flex items-center gap-1.5 text-xs text-journal-muted">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-dim text-brand-light">
+                      <User size={13} />
+                    </span>
                     {user.username}
                   </span>
                   <button
                     onClick={handleLogout}
-                    className="text-journal-muted hover:text-red-500 transition-colors"
+                    className="rounded-md p-1.5 text-journal-muted transition-colors hover:bg-surface-hover hover:text-journal-danger"
                     title="退出登录"
                   >
-                    <LogOut size={16} />
+                    <LogOut size={15} />
                   </button>
                 </div>
               )}
@@ -75,11 +83,12 @@ function App() {
         </div>
       </nav>
 
-      <main className="mx-auto max-w-6xl px-4 py-6">
+      <main className="mx-auto max-w-[1600px] px-4 py-5">
         <Routes>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/problems" element={<ProblemsPage />} />
           <Route path="/problems/:id" element={<ProblemDetailPage />} />
+          <Route path="/templates" element={<TemplatesPage />} />
           <Route path="/learning-curve" element={<LearningCurvePage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" />} />
@@ -90,10 +99,16 @@ function App() {
 }
 
 function NavLink({ to, icon, label }: { to: string; icon: React.ReactNode; label: string }) {
+  const location = useLocation()
+  const active = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
   return (
     <Link
       to={to}
-      className="flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm text-journal-muted transition-colors hover:bg-journal-accentLight/30 hover:text-journal-ink"
+      className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm transition-colors ${
+        active
+          ? 'bg-brand-dim text-brand-light'
+          : 'text-journal-muted hover:bg-surface-hover hover:text-journal-ink'
+      }`}
     >
       {icon}
       <span className="hidden sm:inline">{label}</span>

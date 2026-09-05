@@ -44,3 +44,21 @@ class TutorLogItem(BaseModel):
     tokens_used: Optional[int]
     latency_ms: Optional[int]
     created_at: Optional[str]
+
+
+class ChatMessage(BaseModel):
+    role: str = Field(..., pattern="^(user|assistant)$")
+    content: str = Field(..., min_length=1, max_length=4000)
+
+
+class ChatRequest(BaseModel):
+    problem_id: Optional[int] = None
+    message: str = Field(..., min_length=1, max_length=2000)
+    history: list[ChatMessage] = Field(default_factory=list)
+    user_code: Optional[str] = Field(None, max_length=10000)
+
+
+class ChatResponse(BaseModel):
+    reply: str
+    tokens_used: int
+    latency_ms: int

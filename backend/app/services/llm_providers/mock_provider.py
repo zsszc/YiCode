@@ -176,3 +176,51 @@ class MockLLMProvider(BaseLLMProvider):
             tokens_used=code_len // 2,
             latency_ms=latency,
         )
+
+    async def chat(
+        self,
+        problem,
+        message: str,
+        history: list[dict],
+        user_code: Optional[str] = None,
+    ) -> HintResult:
+        """基于规则的本地对话：无需 API key，围绕题目给出引导式回答。"""
+        start = time.time()
+        msg = message.lower()
+        category = problem.category if problem else ""
+        title = problem.title if problem else "这道题"
+        level1 = HINT_TEMPLATES.get(1, {}).get(category, DEFAULT_HINTS[1])
+        level2 = HINT_TEMPLATES.get(2, {}).get(category, DEFAULT_HINTS[2])
+
+        if any(k in msg for k in ["复杂度", "时间复杂度", "空间复杂度"]):
+            if user_code and ("for" in user_code and user_code.count("for") >= 2):
+                reply = "你当前的代码里出现了嵌套循环，时间复杂度大约是 O(n²)。\n\n" + level2
+            elif user_code and ("for" in user_code or "while" in user_code):
+                reply = "你的代码只有一层循环，时间复杂度大约是 O(n)，已经不错。空间复杂度取决于你额外使用的数据结构。"
+            else:
+                reply = f"先告诉我你的思路，或者把代码发给我，我可以帮你分析复杂度。就「{title}」而言，通常可以把暴力解的复杂度再降一个量级。"
+        elif any(k in msg for k in ["报错", "错误", "error", "bug", "不对", "错了", "debug"]):
+            checks = ["边界条件（空输入、单元素）是否处理", "循环的起止条件是否有 off-by-one", "变量是否在每轮迭代前正确重置"]
+            if category in ("链表", "二叉树"):
+                checks.append("指针/节点引用是否在移动前保存了必要的后继节点")
+            reply = "调试可以按这几步排查：\n" + "\n".join(f"{i+1}. {c}" for i, c in enumerate(checks))
+            reply += "\n\n把报错信息或你怀疑有问题的代码片段发给我，我可以更具体地帮你看。"
+        elif any(k in msg for k in ["提示", "不会", "没思路", "怎么做", "思路"]):
+            reply = f"关于「{title}」：{level1}\n\n如果还想更进一步，我可以给你算法框架级别的提示。"
+        elif any(k in msg for k in ["答案", "直接告诉", "代码给我", "完整代码"]):
+            reply = "直接给答案对成长帮助不大 🙂。我更建议你先用提示自己写一版，哪怕不完美，然后发给我，我会逐行帮你指出可以优化的地方。"
+        elif user_code:
+            features = []
+            if "dict" in user_code or "{" in user_code or "set(" in user_code:
+                features.append("使用了哈希结构，查找效率高")
+            if "while" in user_code:
+                features.append("用了 while 循环控制流程")
+            if "recursion" in msg or ("def " in user_code and user_code.count("def ") >= 2):
+                features.append("包含递归/辅助函数")
+            feat = "、".join(features) if features else "整体结构清晰"
+            reply = f"我看了你写的代码：{feat}。\n\n你想让我帮你检查哪方面？可以说「分析复杂度」「帮我找 bug」或「还能怎么优化」。"
+        else:
+            reply = f"我们围绕「{title}」来聊。你可以：\n- 问我「这题怎么做」获取思路提示\n- 把你写的代码发给我帮你分析\n- 问我某个概念（如「什么是单调栈」）\n\n你想从哪里开始？"
+
+        latency = int((time.time() - start) * 1000)
+        return HintResult(content=reply, tokens_used=len(reply) // 2, latency_ms=latency)
