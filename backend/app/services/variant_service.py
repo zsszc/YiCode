@@ -20,19 +20,29 @@ VARIANT_SYSTEM_PROMPT = """你是一位算法出题专家。根据给定的算�
 1. 题目必须运用该模板的核心思想，但不能照抄经典原题（换场景、换数据形态）
 2. 难度：简单~中等，10 分钟内可完成
 3. 函数签名必须是 class Solution 的一个方法
-4. 测试用例的 input 是「参数列表的 JSON 字符串」，例如函数签名 twoSum(self, nums, target)，
+4. 题面 description 用 Markdown，必须包含：题目描述、示例、**输入格式**（ACM 用）、**输出格式**（ACM 用）
+5. 测试用例的 input 是「参数列表的 JSON 字符串」，例如函数签名 twoSum(self, nums, target)，
    则 input 为 "[[2,7,11,15], 9]"（外层数组包住所有参数）；
    expected 是该用例期望返回值的 JSON 字符串，例如 "[0, 1]"
-5. 输出**严格 JSON**（不要 markdown 围栏），格式：
+6. 同时提供 ACM 模式（完整程序读写标准输入输出）的模板和用例：
+   - acm_starter：完整可运行程序骨架，用 input() 读输入、print() 写输出，
+     **禁止使用 import sys / sys.stdin**（本平台安全沙箱不支持），核心逻辑留空给用户
+   - io_tests：stdin/stdout 对，stdout 是期望的完整输出（末尾换行可有可无）
+7. 输出**严格 JSON**（不要 markdown 围栏），格式：
 {
   "title": "题目标题",
-  "description": "题面（Markdown，含示例说明）",
+  "description": "题面（Markdown，含示例、输入格式、输出格式）",
   "function_name": "函数名（小写下划线）",
   "starter_code": "class Solution:\\n    def 函数名(self, 参数):  # 带类型注解\\n        pass",
   "tests": [
     {"input": "[[...], ...]", "expected": "..."},
     {"input": "...", "expected": "..."},
     {"input": "...", "expected": "..."}
+  ],
+  "acm_starter": "n = int(input())\\n# TODO: 解析输入并求解\\n",
+  "io_tests": [
+    {"stdin": "...", "stdout": "..."},
+    {"stdin": "...", "stdout": "..."}
   ]
 }"""
 
@@ -89,12 +99,24 @@ def _validate(data: dict) -> dict:
         json.loads(exp)  # expected 也必须是合法 JSON
         norm_tests.append({"input": inp, "expected": exp})
 
+    # ACM 部分（可选，有则校验结构）
+    acm_starter = str(data.get("acm_starter") or "").strip()
+    io_tests = data.get("io_tests") or []
+    norm_io = []
+    if isinstance(io_tests, list):
+        for t in io_tests[:6]:
+            stdin, stdout = str(t.get("stdin", "")), str(t.get("stdout", "")).strip()
+            if stdin.strip() and stdout:
+                norm_io.append({"stdin": stdin, "stdout": stdout})
+
     return {
         "title": title[:60],
         "description": description,
         "function_name": fn,
         "starter_code": starter,
         "tests": norm_tests,
+        "acm_starter": acm_starter or None,
+        "io_tests": norm_io,
     }
 
 

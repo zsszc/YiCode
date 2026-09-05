@@ -60,7 +60,14 @@ async def generate_variant_problem(slug: str, db: Session = Depends(get_db)):
         description=variant["description"],
         starter_code=variant["starter_code"],
         function_name=variant["function_name"],
-        test_cases=json.dumps({"tests": variant["tests"]}, ensure_ascii=False),
+        test_cases=json.dumps(
+            {
+                "tests": variant["tests"],
+                "io_tests": variant["io_tests"],
+                "acm_starter": variant["acm_starter"],
+            },
+            ensure_ascii=False,
+        ),
         leetcode_url=None,
     )
     db.add(problem)

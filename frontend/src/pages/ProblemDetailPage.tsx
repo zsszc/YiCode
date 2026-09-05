@@ -3,6 +3,8 @@ import { useParams, Link, useSearchParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import CodeMirror from '@uiw/react-codemirror'
 import { python } from '@codemirror/lang-python'
+import { keymap } from '@codemirror/view'
+import { indentWithTab } from '@codemirror/commands'
 import { linter, lintGutter } from '@codemirror/lint'
 import type { Diagnostic as CMDiagnostic } from '@codemirror/lint'
 import ReactMarkdown from 'react-markdown'
@@ -19,6 +21,8 @@ import {
   Terminal,
   PartyPopper,
   Wand2,
+  Code2,
+  TerminalSquare,
 } from 'lucide-react'
 import { problemsApi, reviewApi, codeApi, profileApi } from '@/services/api'
 import type { CodeRunResponse, RunTestsResponse } from '@/types'
@@ -31,10 +35,20 @@ const DIFF_STYLE: Record<string, string> = {
   困难: 'text-hard bg-hard/10 border-hard/25',
 }
 
+type CodeMode = 'function' | 'acm'
+
+const ACM_DEFAULT_CODE = `# ACM 模式：自己用 input() 读入、print() 输出
+n = int(input())
+arr = list(map(int, input().split()))
+`
+
 export default function ProblemDetailPage() {
   const { id } = useParams<{ id: string }>()
   const problemId = Number(id)
-  const storageKey = `yicode_code_${problemId}`
+  const [mode, setMode] = useState<CodeMode>(
+    () => (localStorage.getItem(`yicode_mode_${problemId}`) === 'acm' ? 'acm' : 'function'),
+  )
+  const storageKey = `yicode_code_${problemId}_${mode}`
 
   const { data: problem, isLoading } = useQuery({
     queryKey: ['problem', problemId],
@@ -42,8 +56,9 @@ export default function ProblemDetailPage() {
   })
 
   const [code, setCode] = useState('')
+  const [stdin, setStdin] = useState('')
   const [leftTab, setLeftTab] = useState<'desc' | 'note'>('desc')
-  const [consoleTab, setConsoleTab] = useState<'tests' | 'output'>('tests')
+  const [consoleTab, setConsoleTab] = useState<'tests' | 'output' | 'stdin'>('tests')
   const [runResult, setRunResult] = useState<CodeRunResponse | null>(null)
   const [judgeResult, setJudgeResult] = useState<RunTestsResponse | null>(null)
   const [running, setRunning] = useState(false)
@@ -99,15 +114,40 @@ export default function ProblemDetailPage() {
     [problemId],
   )
 
-  // 初始化代码：优先本地草稿，否则用模板
+  // 解析 ACM 模式资源（变式题自带 acm_starter / io_tests）
+  const acmSpec = useMemo(() => {
+    if (!problem?.test_cases) return { starter: '', hasIoTests: false }
+    try {
+      const spec = JSON.parse(problem.test_cases)
+      const io = Array.isArray(spec.io_tests) ? spec.io_tests : []
+      return { starter: spec.acm_starter ?? '', hasIoTests: io.length > 0 }
+    } catch {
+      return { starter: '', hasIoTests: false }
+    }
+  }, [problem])
+
+  const starterFor = (m: CodeMode) =>
+    m === 'acm'
+      ? acmSpec.starter || ACM_DEFAULT_CODE
+      : problem?.starter_code ?? '# 在这里编写你的解法\n'
+
+  // 初始化代码：优先本地草稿（按模式分开存），否则用对应模式的模板
   useEffect(() => {
     if (!problem) return
     const draft = localStorage.getItem(storageKey)
-    setCode(draft ?? problem.starter_code ?? '# 在这里编写你的解法\n')
+    setCode(draft ?? starterFor(mode))
     setJudgeResult(null)
     setRunResult(null)
     setSolved(false)
-  }, [problem, storageKey])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [problem, storageKey, mode])
+
+  const switchMode = (m: CodeMode) => {
+    if (m === mode) return
+    localStorage.setItem(`yicode_mode_${problemId}`, m)
+    setMode(m) // 草稿按模式分开存，切换不会丢代码
+    if (m === 'function') setConsoleTab(t => (t === 'stdin' ? 'tests' : t))
+  }
 
   const updateCode = (v: string) => {
     setCode(v)
@@ -115,16 +155,15 @@ export default function ProblemDetailPage() {
   }
 
   const resetCode = () => {
-    if (!problem?.starter_code) return
     if (!window.confirm('确定重置为初始代码模板？当前代码将被清除。')) return
-    updateCode(problem.starter_code)
+    updateCode(starterFor(mode))
   }
 
   const handleRun = async () => {
     setRunning(true)
     setConsoleTab('output')
     try {
-      const r = await codeApi.run(code)
+      const r = await codeApi.run(code, mode === 'acm' ? stdin : undefined)
       setRunResult(r)
     } catch {
       setRunResult({ stdout: '', stderr: '请求失败：请确认后端服务已启动', exit_code: -1, duration_ms: 0, timed_out: false })
@@ -138,7 +177,7 @@ export default function ProblemDetailPage() {
     setConsoleTab('tests')
     setJudgeResult(null)
     try {
-      const r = await codeApi.runTests(problemId, code)
+      const r = await codeApi.runTests(problemId, code, mode)
       setJudgeResult(r)
       if (r.total > 0 && r.passed === r.total) {
         setSolved(true)
@@ -155,11 +194,13 @@ export default function ProblemDetailPage() {
   const hasTests = useMemo(() => {
     if (!problem?.test_cases) return false
     try {
-      return (JSON.parse(problem.test_cases).tests ?? []).length > 0
+      const spec = JSON.parse(problem.test_cases)
+      if (mode === 'acm') return (spec.io_tests ?? []).length > 0
+      return (spec.tests ?? []).length > 0
     } catch {
       return false
     }
-  }, [problem])
+  }, [problem, mode])
 
   if (isLoading) return <div className="py-20 text-center text-journal-muted">加载中...</div>
   if (!problem) return <div className="py-20 text-center text-journal-danger">题目不存在</div>
@@ -203,6 +244,28 @@ export default function ProblemDetailPage() {
         {/* 工具栏 */}
         <div className="flex items-center justify-between border-b border-line px-3 py-2">
           <div className="flex items-center gap-2">
+            {/* 模式切换：核心代码 / ACM */}
+            <div className="flex rounded-lg border border-line bg-surface p-0.5">
+              <button
+                onClick={() => switchMode('function')}
+                className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  mode === 'function' ? 'bg-brand text-white' : 'text-journal-muted hover:text-journal-ink'
+                }`}
+              >
+                <Code2 size={12} />
+                核心代码
+              </button>
+              <button
+                onClick={() => switchMode('acm')}
+                title={acmSpec.hasIoTests ? 'ACM 模式：自己读输入、写输出' : 'ACM 模式（本题暂无 ACM 判题用例，可自由调试）'}
+                className={`flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  mode === 'acm' ? 'bg-brand text-white' : 'text-journal-muted hover:text-journal-ink'
+                }`}
+              >
+                <TerminalSquare size={12} />
+                ACM
+              </button>
+            </div>
             <span className="rounded-md border border-line bg-surface px-2 py-1 font-mono text-xs text-journal-muted">Python 3</span>
             <button
               onClick={resetCode}
@@ -261,7 +324,7 @@ export default function ProblemDetailPage() {
           <CodeMirror
             value={code}
             onChange={updateCode}
-            extensions={[python(), lintExtension, completionExtension]}
+            extensions={[python(), keymap.of([indentWithTab]), lintExtension, completionExtension]}
             theme="dark"
             height="100%"
             style={{ height: '100%' }}
@@ -274,6 +337,9 @@ export default function ProblemDetailPage() {
           <div className="flex items-center gap-1 border-b border-line px-3 py-1.5">
             <TabButton active={consoleTab === 'tests'} onClick={() => setConsoleTab('tests')} icon={<FlaskConical size={13} />} label="测试结果" />
             <TabButton active={consoleTab === 'output'} onClick={() => setConsoleTab('output')} icon={<Terminal size={13} />} label="运行输出" />
+            {mode === 'acm' && (
+              <TabButton active={consoleTab === 'stdin'} onClick={() => setConsoleTab('stdin')} icon={<TerminalSquare size={13} />} label="自定义输入" />
+            )}
             {judgeResult && consoleTab === 'tests' && judgeResult.total > 0 && (
               <span className={`ml-auto text-xs font-medium ${judgeResult.passed === judgeResult.total ? 'text-easy' : 'text-hard'}`}>
                 通过 {judgeResult.passed}/{judgeResult.total} · {judgeResult.duration_ms}ms
@@ -281,8 +347,21 @@ export default function ProblemDetailPage() {
             )}
           </div>
           <div className="flex-1 overflow-y-auto p-3">
-            {consoleTab === 'tests' ? (
-              <JudgeView result={judgeResult} running={running} hasTests={hasTests} />
+            {consoleTab === 'stdin' && mode === 'acm' ? (
+              <div className="flex h-full flex-col gap-2">
+                <p className="text-xs text-journal-muted">
+                  ACM 模式的自定义标准输入（点「运行」时作为 stdin 传给程序；「提交判题」使用内置用例）：
+                </p>
+                <textarea
+                  value={stdin}
+                  onChange={e => setStdin(e.target.value)}
+                  spellCheck={false}
+                  placeholder={'例如：\n3\n1 2 3'}
+                  className="min-h-0 flex-1 resize-none rounded-lg border border-line bg-black/40 p-3 font-mono text-xs text-journal-ink outline-none placeholder:text-journal-muted/50 focus:border-brand"
+                />
+              </div>
+            ) : consoleTab === 'tests' ? (
+              <JudgeView result={judgeResult} running={running} hasTests={hasTests} acm={mode === 'acm'} />
             ) : (
               <OutputView result={runResult} running={running} />
             )}
@@ -324,12 +403,18 @@ function TabButton({ active, onClick, icon, label }: { active: boolean; onClick:
   )
 }
 
-function JudgeView({ result, running, hasTests }: { result: RunTestsResponse | null; running: boolean; hasTests: boolean }) {
+function JudgeView({ result, running, hasTests, acm }: { result: RunTestsResponse | null; running: boolean; hasTests: boolean; acm: boolean }) {
   if (running && !result) return <div className="py-6 text-center text-xs text-journal-muted">判题中...</div>
   if (!result) {
     return (
       <div className="py-6 text-center text-xs text-journal-muted">
-        {hasTests ? '点击「提交判题」运行全部测试用例' : '本题暂不支持自动判题，可用「运行」自由调试'}
+        {hasTests
+          ? acm
+            ? '点击「提交判题」用内置 stdin/stdout 用例判题'
+            : '点击「提交判题」运行全部测试用例'
+          : acm
+            ? '本题暂无 ACM 判题用例，可用「自定义输入 + 运行」自由调试'
+            : '本题暂不支持自动判题，可用「运行」自由调试'}
       </div>
     )
   }
@@ -359,19 +444,25 @@ function JudgeView({ result, running, hasTests }: { result: RunTestsResponse | n
             <span className={c.ok ? 'text-easy' : 'text-hard'}>用例 {i + 1}</span>
           </div>
           <div className="mt-1.5 space-y-1 font-mono text-xs">
-            <p className="text-journal-muted">输入: <span className="text-journal-ink">{c.input}</span></p>
+            <div className="text-journal-muted">
+              输入:
+              <pre className="mt-0.5 whitespace-pre-wrap rounded bg-black/30 px-2 py-1 text-journal-ink">{c.input}</pre>
+            </div>
             {!c.ok && (
               <>
-                <p className="text-journal-muted">期望: <span className="text-easy">{c.expected}</span></p>
-                <p className="text-journal-muted">实际: <span className="text-hard">{c.actual}</span></p>
+                <div className="text-journal-muted">
+                  期望:
+                  <pre className="mt-0.5 whitespace-pre-wrap rounded bg-black/30 px-2 py-1 text-easy">{c.expected}</pre>
+                </div>
+                <div className="text-journal-muted">
+                  实际:
+                  <pre className="mt-0.5 whitespace-pre-wrap rounded bg-black/30 px-2 py-1 text-hard">{c.actual}</pre>
+                </div>
               </>
             )}
           </div>
         </div>
       ))}
-      {result.stderr && result.cases.length > 0 === false && (
-        <pre className="whitespace-pre-wrap font-mono text-xs text-hard">{result.stderr}</pre>
-      )}
       {result.stderr && result.cases.length === 0 && (
         <pre className="whitespace-pre-wrap font-mono text-xs text-hard">{result.stderr}</pre>
       )}

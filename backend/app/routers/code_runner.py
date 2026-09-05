@@ -31,6 +31,7 @@ class RunTestsRequest(BaseModel):
     problem_id: int = Field(..., description="题目 ID")
     code: str = Field(..., min_length=1, max_length=20000, description="Python 代码")
     timeout: int = Field(15, ge=1, le=30, description="超时时间（秒）")
+    mode: str = Field("function", description="判题模式：function=核心代码 / acm=完整程序 stdin/stdout")
 
 
 class JudgeCase(BaseModel):
@@ -70,25 +71,34 @@ async def run_code(req: CodeRunRequest):
 
 @router.post("/run-tests", response_model=RunTestsResponse)
 async def run_tests(req: RunTestsRequest, db: Session = Depends(get_db)):
-    """针对某道题的内置测试用例运行并判题。"""
+    """针对某道题的内置测试用例运行并判题（支持 function / acm 两种模式）。"""
     import json
 
     from app.models.problem import Problem
-    from app.services.code_runner_service import run_problem_tests
+    from app.services.code_runner_service import run_problem_tests, run_acm_tests
 
     problem = db.query(Problem).filter(Problem.id == req.problem_id).first()
     if not problem:
         raise HTTPException(status_code=404, detail=f"题目 #{req.problem_id} 不存在")
-    if not problem.test_cases or not problem.function_name:
+    if not problem.test_cases:
         raise HTTPException(status_code=400, detail="本题暂未配置测试用例，请使用自由运行")
 
     spec = json.loads(problem.test_cases)
-    result = run_problem_tests(
-        code=req.code,
-        function_name=problem.function_name,
-        spec=spec,
-        timeout_seconds=req.timeout,
-    )
+
+    if req.mode == "acm":
+        io_tests = spec.get("io_tests") or []
+        if not io_tests:
+            raise HTTPException(status_code=400, detail="本题暂无 ACM 判题用例，可用「运行」配合自定义输入调试")
+        result = run_acm_tests(code=req.code, io_tests=io_tests, timeout_seconds=req.timeout)
+    else:
+        if not problem.function_name:
+            raise HTTPException(status_code=400, detail="本题暂未配置测试用例，请使用自由运行")
+        result = run_problem_tests(
+            code=req.code,
+            function_name=problem.function_name,
+            spec=spec,
+            timeout_seconds=req.timeout,
+        )
     return {
         "passed": result.passed,
         "total": result.total,

@@ -553,3 +553,61 @@ def run_problem_tests(
         duration_ms=result.duration_ms,
         timed_out=result.timed_out,
     )
+
+
+def run_acm_tests(
+    code: str,
+    io_tests: list[dict],
+    timeout_seconds: int = 15,
+) -> JudgeResult:
+    """ACM 模式判题：完整程序逐用例运行，stdin 喂入、比对 stdout。
+
+    io_tests: [{"stdin": "...", "stdout": "..."}]
+    比对规则：忽略首尾空白与行尾空格（宽松比对）。
+    """
+    import time as _time
+
+    if not io_tests:
+        return JudgeResult(
+            passed=0, total=0, cases=[],
+            stdout="", stderr="本题暂无 ACM 测试用例", duration_ms=0,
+        )
+
+    def norm(s: str) -> str:
+        return "\n".join(line.rstrip() for line in (s or "").strip().splitlines())
+
+    cases = []
+    passed = 0
+    total_ms = 0
+    t0 = _time.time()
+    for t in io_tests:
+        expected = t.get("stdout", "")
+        stdin_data = t.get("stdin", "")
+        result = run_python_code(code, timeout_seconds=timeout_seconds, stdin_input=stdin_data)
+        total_ms += result.duration_ms
+        if result.exit_code == -2:
+            return JudgeResult(
+                passed=passed, total=len(io_tests), cases=cases,
+                stdout="", stderr="代码被安全沙箱拦截",
+                duration_ms=total_ms, sandbox_blocked=True,
+            )
+        if result.timed_out:
+            cases.append({"input": stdin_data, "expected": expected, "actual": "(超时)", "ok": False})
+            continue
+        if result.exit_code != 0:
+            err = (result.stderr or "运行错误").strip().splitlines()
+            cases.append({"input": stdin_data, "expected": expected, "actual": err[-1] if err else "运行错误", "ok": False})
+            continue
+        ok = norm(result.stdout) == norm(expected)
+        passed += 1 if ok else 0
+        cases.append({
+            "input": stdin_data,
+            "expected": expected,
+            "actual": result.stdout.strip(),
+            "ok": ok,
+        })
+
+    return JudgeResult(
+        passed=passed, total=len(io_tests), cases=cases,
+        stdout="", stderr="", duration_ms=total_ms,
+    )

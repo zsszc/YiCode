@@ -9,9 +9,10 @@
 ## 功能一览
 
 ### 💻 站内刷题（不用跳转 LeetCode）
-- **在线代码编辑器** — CodeMirror 6，Python 语法高亮
-- **内置判题系统** — 每题内置多组测试用例，提交即出结果
-- **自由运行** — print 调试，随时跑代码
+- **在线代码编辑器** — CodeMirror 6，Python 语法高亮，Tab 缩进符合规范
+- **双刷题模式** — 核心代码模式（LeetCode 风格，只写关键函数）/ ACM 模式（自己读 stdin、写 stdout，完整程序）
+- **内置判题系统** — 核心代码按函数用例判题，ACM 模式按 stdin/stdout 用例判题
+- **自由运行** — print 调试，ACM 模式支持自定义标准输入
 
 ### 🤖 AI Tutor（真实大模型，流式输出）
 - **流式对话** — SSE 打字机效果，带着题目上下文和你当前的代码提问
@@ -28,6 +29,7 @@
 - **记忆口诀 + 易错点** — 为背诵优化
 - **遮挡默写** — 模糊遮罩，先在脑中默写再核对
 - **关联真题** — 背完模板直接跳转对应题目练手
+- **AI 变式练习** — 基于模板生成原创变式题（含 ACM 判题用例），防止"背熟了但换个马甲就不会"
 
 ### 📋 科学复习
 - **每日看板** — 到期复习题 + 新题配额
@@ -141,6 +143,16 @@ YiCode/
 cd backend
 python -m pytest tests/ -q    # 100 passed
 ```
+
+---
+
+## CI/CD
+
+- **CI**（`.github/workflows/ci.yml`）：push / PR 触发，跑后端 pytest + 前端构建 + gitleaks 泄密扫描
+- **CD**（`.github/workflows/cd.yml`）：CI 在 main 分支成功后自动部署到生产服务器（自动备份数据库 → 上传 → 重启 → 健康检查）
+- CD 需在仓库 Settings → Secrets 配置：`DEPLOY_HOST`、`DEPLOY_USER`、`DEPLOY_KEY`（SSH 私钥）
+
+运维规范见 [docs/SOP.md](docs/SOP.md)，安全事件复盘见 [docs/incident-review-2026-09-05.md](docs/incident-review-2026-09-05.md)。
 
 ---
 

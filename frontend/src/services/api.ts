@@ -109,8 +109,8 @@ export const tutorApi = {
 export const codeApi = {
   run: (code: string, stdin?: string) =>
     api.post<CodeRunResponse>('/code/run', { code, stdin }).then(r => r.data),
-  runTests: (problemId: number, code: string) =>
-    api.post<RunTestsResponse>('/code/run-tests', { problem_id: problemId, code }).then(r => r.data),
+  runTests: (problemId: number, code: string, mode: 'function' | 'acm' = 'function') =>
+    api.post<RunTestsResponse>('/code/run-tests', { problem_id: problemId, code, mode }).then(r => r.data),
   /** 静态诊断：波浪线数据源 */
   lint: (code: string) =>
     api.post<{ diagnostics: Diagnostic[] }>('/code/lint', { code }).then(r => r.data.diagnostics),
