@@ -92,6 +92,27 @@ export default function ProblemDetailPage() {
   const [running, setRunning] = useState(false)
   const [searchParams] = useSearchParams()
   const [tutorOpen, setTutorOpen] = useState(searchParams.get('tutor') === '1')
+  // AI Tutor 面板宽度（可拖拽左缘调整，记忆偏好）
+  const [tutorWidth, setTutorWidth] = useState(
+    () => Number(localStorage.getItem('yicode_tutor_width')) || 460,
+  )
+  const startTutorDrag = (e: React.MouseEvent) => {
+    e.preventDefault()
+    const onMove = (ev: MouseEvent) => {
+      const w = Math.min(Math.max(window.innerWidth - ev.clientX, 340), Math.floor(window.innerWidth * 0.6))
+      setTutorWidth(w)
+    }
+    const onUp = () => {
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('mouseup', onUp)
+      setTutorWidth(w => {
+        localStorage.setItem('yicode_tutor_width', String(w))
+        return w
+      })
+    }
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('mouseup', onUp)
+  }
   const [solved, setSolved] = useState(false)
   const [aiCompleteOn, setAiCompleteOn] = useState(
     () => localStorage.getItem('yicode_ai_complete') === '1',
@@ -435,9 +456,14 @@ export default function ProblemDetailPage() {
         )}
       </div>
 
-      {/* 右栏：AI Tutor */}
+      {/* 右栏：AI Tutor（可拖拽左缘调宽） */}
       {tutorOpen && (
-        <div className="w-[380px] shrink-0">
+        <div className="relative shrink-0" style={{ width: tutorWidth }}>
+          <div
+            onMouseDown={startTutorDrag}
+            title="拖拽调整宽度"
+            className="absolute -left-1 top-0 z-20 h-full w-2 cursor-col-resize transition-colors hover:bg-brand/40 active:bg-brand/60"
+          />
           <TutorPanel
             problemId={problemId}
             problemTitle={problem.title}

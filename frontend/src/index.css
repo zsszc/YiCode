@@ -64,6 +64,21 @@
 .prose-dark h1, .prose-dark h2, .prose-dark h3 {
   @apply mt-3 mb-1 font-semibold text-white;
 }
+/* 表格：窄栏里允许横向滚动，避免挤成一团 */
+.prose-dark table {
+  @apply my-3 block overflow-x-auto text-xs;
+  border-collapse: collapse;
+  max-width: 100%;
+}
+.prose-dark th, .prose-dark td {
+  @apply border border-line px-2.5 py-1.5 text-left align-top;
+}
+.prose-dark th {
+  @apply whitespace-nowrap bg-surface font-semibold text-white;
+}
+.prose-dark tbody tr:nth-child(even) {
+  @apply bg-white/[0.03];
+}
 
 /* CodeMirror 适配深色 */
 .cm-editor {
