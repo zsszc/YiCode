@@ -11,6 +11,14 @@ const DIFF_STYLE: Record<string, string> = {
   困难: 'text-hard bg-hard/10 border-hard/25',
 }
 
+// 进度状态徽标
+const STATUS_STYLE: Record<string, { label: string; cls: string }> = {
+  solid: { label: '✓ 稳固', cls: 'text-easy border-easy/30 bg-easy/10' },
+  shaky: { label: '◐ 磕绊', cls: 'text-medium border-medium/30 bg-medium/10' },
+  forgot: { label: '✗ 遗忘', cls: 'text-hard border-hard/30 bg-hard/10' },
+  archived: { label: '📦 归档', cls: 'text-journal-muted border-line bg-surface' },
+}
+
 export default function ProblemsPage() {
   const [keyword, setKeyword] = useState('')
   const [difficulty, setDifficulty] = useState<string>('全部')
@@ -32,6 +40,17 @@ export default function ProblemsPage() {
       ),
     [problems, difficulty, category]
   )
+
+  // 按方法模块分组展示
+  const grouped = useMemo(() => {
+    const map = new Map<string, typeof filtered>()
+    for (const p of filtered) {
+      const list = map.get(p.category)
+      if (list) list.push(p)
+      else map.set(p.category, [p])
+    }
+    return Array.from(map.entries())
+  }, [filtered])
 
   const stats = useMemo(() => {
     const all = problems ?? []
@@ -126,45 +145,70 @@ export default function ProblemsPage() {
         ))}
       </div>
 
-      {/* 题目卡片 */}
+      {/* 题目卡片（按方法模块分组） */}
       {isLoading ? (
         <div className="py-20 text-center text-journal-muted">加载中...</div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-          {filtered.map(p => (
-            <Link
-              key={p.id}
-              to={`/problems/${p.id}`}
-              className="group rounded-xl border border-line bg-surface p-4 transition-all hover:border-brand/40 hover:bg-surface-raised hover:shadow-card"
-            >
-              <div className="flex items-center justify-between">
-                <span
-                  className={`inline-block rounded-md border px-2 py-0.5 text-xs font-medium ${
-                    DIFF_STYLE[p.difficulty] ?? 'text-journal-muted bg-surface'
-                  }`}
-                >
-                  {p.difficulty}
-                </span>
-                <span className="text-xs text-journal-muted">{p.category}</span>
-              </div>
-              <h3 className="mt-2.5 font-semibold text-journal-ink transition-colors group-hover:text-brand-light">
-                <span className="mr-1.5 font-mono text-sm text-journal-muted">#{p.id}</span>
-                {p.title}
-              </h3>
-              <div className="mt-3 flex items-center justify-between border-t border-line/60 pt-3">
-                <span className="flex items-center gap-1.5 text-xs text-journal-muted">
-                  <Code2 size={13} className="text-brand-light" />
-                  站内编码 · AI 辅导
-                </span>
-                <ChevronRight
-                  size={15}
-                  className="text-journal-muted transition-all group-hover:translate-x-0.5 group-hover:text-brand-light"
-                />
-              </div>
-            </Link>
-          ))}
+        <div className="space-y-6">
+          {grouped.map(([cat, list]) => {
+            const doneInCat = list.filter(p => p.status && p.status !== 'todo').length
+            return (
+              <section key={cat}>
+                <div className="mb-2.5 flex items-baseline gap-2.5">
+                  <h2 className="text-sm font-semibold text-white">{cat}</h2>
+                  <span className="text-xs text-journal-muted">
+                    {doneInCat}/{list.length} 已完成
+                  </span>
+                  <div className="h-px flex-1 bg-line/60" />
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {list.map(p => {
+                    const st = p.status && p.status !== 'todo' ? STATUS_STYLE[p.status] : null
+                    return (
+                      <Link
+                        key={p.id}
+                        to={`/problems/${p.id}`}
+                        className={`group rounded-xl border bg-surface p-4 transition-all hover:border-brand/40 hover:bg-surface-raised hover:shadow-card ${
+                          st ? 'border-easy/25' : 'border-line'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span
+                            className={`inline-block rounded-md border px-2 py-0.5 text-xs font-medium ${
+                              DIFF_STYLE[p.difficulty] ?? 'text-journal-muted bg-surface'
+                            }`}
+                          >
+                            {p.difficulty}
+                          </span>
+                          {st && (
+                            <span className={`rounded-md border px-2 py-0.5 text-xs font-medium ${st.cls}`}>
+                              {st.label}
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="mt-2.5 font-semibold text-journal-ink transition-colors group-hover:text-brand-light">
+                          <span className="mr-1.5 font-mono text-sm text-journal-muted">#{p.id}</span>
+                          {p.title}
+                        </h3>
+                        <div className="mt-3 flex items-center justify-between border-t border-line/60 pt-3">
+                          <span className="flex items-center gap-1.5 text-xs text-journal-muted">
+                            <Code2 size={13} className="text-brand-light" />
+                            站内编码 · AI 辅导
+                          </span>
+                          <ChevronRight
+                            size={15}
+                            className="text-journal-muted transition-all group-hover:translate-x-0.5 group-hover:text-brand-light"
+                          />
+                        </div>
+                      </Link>
+                    )
+                  })}
+                </div>
+              </section>
+            )
+          })}
           {filtered.length === 0 && (
-            <div className="col-span-full py-16 text-center text-sm text-journal-muted">
+            <div className="py-16 text-center text-sm text-journal-muted">
               没有匹配的题目，换个关键词或筛选条件试试
             </div>
           )}

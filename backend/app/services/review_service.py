@@ -41,13 +41,20 @@ class ReviewService:
         return prog
 
     def first_solve(self, problem_id: int, status: str, user_id: int = 1) -> Progress:
-        """首次刷完题目。"""
+        """首次刷完题目。
+
+        判题全部通过时前端会自动以 shaky 落一条记录；用户随后可在结果条上
+        修正为 solid/forgot。规则：已有记录且不是今天刷的 → 不覆盖（防降级）。
+        """
         prog = self.get_or_create_progress(problem_id, user_id)
-        stage, next_review, new_status = apply_first_solve(status, date.today())
+        today = date.today()
+        if prog.status != STATUS_TODO and prog.last_done != today:
+            return prog  # 历史已有结论，保持不动
+        stage, next_review, new_status = apply_first_solve(status, today)
         prog.status = new_status
         prog.review_stage = stage
         prog.next_review = date.fromisoformat(next_review) if next_review else None
-        prog.last_done = date.today()
+        prog.last_done = today
         self.db.commit()
         self.db.refresh(prog)
         return prog

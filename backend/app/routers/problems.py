@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from app.dependencies import get_db
+from app.models.progress import Progress
 from app.services import ProblemService
 from app.schemas.problem import ProblemOut, ProblemListItem, CategoryOut, ProblemCreate
 from app.core.exceptions import ProblemNotFound
@@ -17,10 +18,16 @@ def list_problems(
     difficulty: Optional[str] = Query(None),
     db: Session = Depends(get_db),
 ):
-    """题目列表，支持搜索和筛选。"""
+    """题目列表，支持搜索和筛选。附带每题的复习进度状态。"""
     service = ProblemService(db)
     problems = service.search(keyword=keyword, category=category, difficulty=difficulty)
-    # 附加进度状态（简化：默认 todo）
+    # 进度状态（与看板一致：单进度池，按题目聚合）
+    prog_map = {
+        p.problem_id: p
+        for p in db.query(Progress).filter(
+            Progress.problem_id.in_([p.id for p in problems] or [0])
+        ).all()
+    }
     return [
         {
             "id": p.id,
@@ -29,8 +36,8 @@ def list_problems(
             "difficulty": p.difficulty,
             "category": p.category,
             "is_custom": p.is_custom,
-            "status": "todo",
-            "next_review": None,
+            "status": prog_map[p.id].status if p.id in prog_map else "todo",
+            "next_review": prog_map[p.id].next_review.isoformat() if p.id in prog_map and prog_map[p.id].next_review else None,
             "note": "",
         }
         for p in problems

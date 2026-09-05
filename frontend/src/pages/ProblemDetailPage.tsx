@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, Link, useSearchParams } from 'react-router-dom'
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import CodeMirror from '@uiw/react-codemirror'
 import { python } from '@codemirror/lang-python'
 import { keymap } from '@codemirror/view'
@@ -14,6 +14,8 @@ import rehypeKatex from 'rehype-katex'
 import 'katex/dist/katex.min.css'
 import {
   ArrowLeft,
+  ChevronLeft,
+  ChevronRight,
   Play,
   FlaskConical,
   Sparkles,
@@ -59,6 +61,28 @@ export default function ProblemDetailPage() {
     queryFn: () => problemsApi.get(problemId),
   })
 
+  const queryClient = useQueryClient()
+
+  // 全量题目 id 列表（上一题/下一题导航用）
+  const { data: allProblems } = useQuery({
+    queryKey: ['problems', 'all-ids'],
+    queryFn: () => problemsApi.list(),
+    staleTime: 60_000,
+  })
+  const { prevId, nextId } = useMemo(() => {
+    if (!allProblems) return { prevId: undefined, nextId: undefined } as const
+    const idx = allProblems.findIndex(p => p.id === problemId)
+    return {
+      prevId: idx > 0 ? allProblems[idx - 1].id : undefined,
+      nextId: idx >= 0 && idx < allProblems.length - 1 ? allProblems[idx + 1].id : undefined,
+    }
+  }, [allProblems, problemId])
+
+  // 切换题目（上一题/下一题）时恢复该题的模式选择
+  useEffect(() => {
+    setMode(localStorage.getItem(`yicode_mode_${problemId}`) === 'acm' ? 'acm' : 'function')
+  }, [problemId])
+
   const [code, setCode] = useState('')
   const [stdin, setStdin] = useState('')
   const [leftTab, setLeftTab] = useState<'desc' | 'note'>('desc')
@@ -81,6 +105,13 @@ export default function ProblemDetailPage() {
       return !v
     })
   }
+
+  // 静态扩展必须记忆化：每次渲染新建实例会导致编辑器重配置，
+  // ghost text 的 StateField 被重置，表现为「幽灵文本在但 Tab 接受了缩进」
+  const staticExtensions = useMemo(
+    () => [python(), indentUnit.of('    '), keymap.of([indentWithTab])],
+    [],
+  )
 
   // 静态诊断：波浪线 + hover 报错（后端 AST 分析，700ms 防抖由 linter 内置）
   const lintExtension = useMemo(
@@ -187,6 +218,13 @@ export default function ProblemDetailPage() {
       if (r.total > 0 && r.passed === r.total) {
         setSolved(true)
         profileApi.recordBehavior(problemId, 'judge_pass', { duration_ms: r.duration_ms }).catch(() => {})
+        // 全部通过自动记一条进度（默认「磕绊」，可在下方结果条上修正），让题库/看板进度即时更新
+        reviewApi.firstSolve(problemId, 'shaky')
+          .then(() => {
+            queryClient.invalidateQueries({ queryKey: ['problems'] })
+            queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+          })
+          .catch(() => {})
       }
     } catch (e: any) {
       const msg = e?.response?.data?.detail ?? '判题请求失败，请确认后端服务已启动'
@@ -219,6 +257,24 @@ export default function ProblemDetailPage() {
             <Link to="/problems" className="rounded-md p-1 text-journal-muted transition-colors hover:bg-surface-hover hover:text-white">
               <ArrowLeft size={17} />
             </Link>
+            {/* 上一题 / 下一题 */}
+            <div className="flex items-center rounded-md border border-line">
+              {prevId ? (
+                <Link to={`/problems/${prevId}`} title="上一题" className="p-1 text-journal-muted transition-colors hover:bg-surface-hover hover:text-white">
+                  <ChevronLeft size={15} />
+                </Link>
+              ) : (
+                <span className="p-1 text-journal-muted/30"><ChevronLeft size={15} /></span>
+              )}
+              <span className="h-4 w-px bg-line" />
+              {nextId ? (
+                <Link to={`/problems/${nextId}`} title="下一题" className="p-1 text-journal-muted transition-colors hover:bg-surface-hover hover:text-white">
+                  <ChevronRight size={15} />
+                </Link>
+              ) : (
+                <span className="p-1 text-journal-muted/30"><ChevronRight size={15} /></span>
+              )}
+            </div>
             <span className={`rounded-md border px-2 py-0.5 text-xs font-medium ${DIFF_STYLE[problem.difficulty]}`}>
               {problem.difficulty}
             </span>
@@ -329,7 +385,7 @@ export default function ProblemDetailPage() {
           <CodeMirror
             value={code}
             onChange={updateCode}
-            extensions={[python(), indentUnit.of('    '), keymap.of([indentWithTab]), lintExtension, completionExtension]}
+            extensions={[...staticExtensions, lintExtension, completionExtension]}
             theme="dark"
             height="100%"
             style={{ height: '100%' }}
@@ -494,9 +550,14 @@ function OutputView({ result, running }: { result: CodeRunResponse | null; runni
 }
 
 function SolvedBar({ problemId, onDone }: { problemId: number; onDone: () => void }) {
+  const queryClient = useQueryClient()
   const mark = useMutation({
     mutationFn: (status: 'forgot' | 'shaky' | 'solid') => reviewApi.firstSolve(problemId, status),
-    onSuccess: onDone,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['problems'] })
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] })
+      onDone()
+    },
   })
   return (
     <div className="flex items-center justify-between border-t border-easy/30 bg-easy/10 px-4 py-2.5">
