@@ -11,6 +11,7 @@ from typing import Optional
 import httpx
 
 from app.config import get_settings
+from app.services.code_runner_service import run_python_code
 
 settings = get_settings()
 
@@ -28,7 +29,11 @@ VARIANT_SYSTEM_PROMPT = """你是一位算法出题专家。根据给定的算�
    - acm_starter：完整可运行程序骨架，用 input() 读输入、print() 写输出，
      **禁止使用 import sys / sys.stdin**（本平台安全沙箱不支持），核心逻辑留空给用户
    - io_tests：stdin/stdout 对，stdout 是期望的完整输出（末尾换行可有可无）
-7. 输出**严格 JSON**（不要 markdown 围栏），格式：
+7. 必须给出两份参考解用于平台自检（不会展示给用户）：
+   - reference_fn：class Solution 的完整正确实现（方法名与 function_name 一致）
+   - reference_acm：完整 ACM 正确程序（input() 读入、print() 输出，禁止 import sys），
+     它跑每个 io_tests 的输出必须与 stdout 完全一致
+8. 输出**严格 JSON**（不要 markdown 围栏），格式：
 {
   "title": "题目标题",
   "description": "题面（Markdown，含示例、输入格式、输出格式）",
@@ -43,7 +48,9 @@ VARIANT_SYSTEM_PROMPT = """你是一位算法出题专家。根据给定的算�
   "io_tests": [
     {"stdin": "...", "stdout": "..."},
     {"stdin": "...", "stdout": "..."}
-  ]
+  ],
+  "reference_fn": "class Solution:\\n    def 函数名(self, ...):\\n        ...",
+  "reference_acm": "n = int(input())\\n...\\nprint(ans)"
 }"""
 
 
@@ -65,6 +72,43 @@ def _extract_json(text: str) -> dict:
         return json.loads(text[start : end + 1])
     except json.JSONDecodeError as e:
         raise VariantError(f"AI 输出的 JSON 无法解析: {e}")
+
+
+def _norm_out(s: str) -> str:
+    return "\n".join(line.rstrip() for line in (s or "").strip().splitlines())
+
+
+def _verify_with_references(fn: str, reference_fn: str, norm_tests: list,
+                            reference_acm: str, norm_io: list) -> None:
+    """用沙箱实际运行参考解，验证所有用例的期望值正确。不合格抛 VariantError。"""
+    for i, t in enumerate(norm_tests):
+        driver = (
+            reference_fn
+            + "\nimport json as _json\n"
+            + f"_r = Solution().{fn}(*_json.loads({json.dumps(json.dumps(t['args']))}))\n"
+            + "print(_json.dumps(_r))\n"
+        )
+        r = run_python_code(driver, timeout_seconds=10)
+        if r.exit_code != 0:
+            tail = r.stderr.strip().splitlines()[-1] if r.stderr else "超时"
+            raise VariantError(f"函数参考解运行失败（用例{i+1}）: {tail[:100]}")
+        try:
+            got = json.loads(r.stdout.strip())
+        except (json.JSONDecodeError, ValueError):
+            raise VariantError(f"函数参考解输出不是 JSON（用例{i+1}）")
+        if got != t["expected"]:
+            raise VariantError(
+                f"函数用例{i+1}期望值错误：期望 {t['expected']!r}，参考解算出 {got!r}"
+            )
+    for i, t in enumerate(norm_io):
+        r = run_python_code(reference_acm, timeout_seconds=10, stdin_input=t["stdin"])
+        if r.exit_code != 0:
+            tail = r.stderr.strip().splitlines()[-1] if r.stderr else "超时"
+            raise VariantError(f"ACM 参考解运行失败（用例{i+1}）: {tail[:100]}")
+        if _norm_out(r.stdout) != _norm_out(t["stdout"]):
+            raise VariantError(
+                f"ACM 用例{i+1}期望输出错误：期望 {t['stdout']!r}，参考解输出 {r.stdout.strip()!r}"
+            )
 
 
 def _validate(data: dict) -> dict:
@@ -97,7 +141,8 @@ def _validate(data: dict) -> dict:
         except (json.JSONDecodeError, ValueError):
             raise VariantError(f"测试用例 input 不是 JSON 数组: {inp[:60]}")
         json.loads(exp)  # expected 也必须是合法 JSON
-        norm_tests.append({"input": inp, "expected": exp})
+        # 判题 harness 的规范格式是 {"args": [...], "expected": <JSON 值>}
+        norm_tests.append({"args": parsed, "expected": json.loads(exp)})
 
     # ACM 部分（可选，有则校验结构）
     acm_starter = str(data.get("acm_starter") or "").strip()
@@ -108,6 +153,15 @@ def _validate(data: dict) -> dict:
             stdin, stdout = str(t.get("stdin", "")), str(t.get("stdout", "")).strip()
             if stdin.strip() and stdout:
                 norm_io.append({"stdin": stdin, "stdout": stdout})
+
+    # 双参考解自检：期望值必须与参考解实际运行结果一致
+    reference_fn = str(data.get("reference_fn") or "").strip()
+    reference_acm = str(data.get("reference_acm") or "").strip()
+    if not reference_fn or fn not in reference_fn:
+        raise VariantError("缺少 reference_fn 参考解")
+    if norm_io and not reference_acm:
+        raise VariantError("缺少 reference_acm 参考解")
+    _verify_with_references(fn, reference_fn, norm_tests, reference_acm, norm_io)
 
     return {
         "title": title[:60],

@@ -44,7 +44,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-journal-bg">
-      <nav className="sticky top-0 z-50 border-b border-line bg-journal-bg/85 backdrop-blur-md">
+      <nav className="sticky top-0 z-50 border-b border-line bg-journal-bg/85 backdrop-blur-fix-md">
         <div className="mx-auto max-w-[1600px] px-4">
           <div className="flex h-14 items-center justify-between">
             <Link to="/" className="group flex items-center gap-2.5">

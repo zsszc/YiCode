@@ -160,3 +160,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   outline: 2px solid rgba(124, 108, 240, 0.55);
   outline-offset: 2px;
 }
+
+/* 显式模糊工具类：Tailwind 的 blur-* 依赖 CSS 变量链，
+   部分构建下变量缺失会导致滤镜静默失效（遮挡默写曾因此不生效） */
+.blur-code {
+  filter: blur(8px);
+}
+.backdrop-blur-fix-md {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.backdrop-blur-fix-sm {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}

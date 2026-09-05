@@ -176,7 +176,7 @@ function TemplateDetailView({ slug }: { slug: string }) {
         <div className="relative">
           <pre
             className={`overflow-x-auto p-4 font-mono text-[13px] leading-6 text-journal-ink transition-all duration-300 ${
-              revealed ? '' : 'select-none blur-md'
+              revealed ? '' : 'select-none blur-code'
             }`}
           >
             {tpl.code}
@@ -186,7 +186,7 @@ function TemplateDetailView({ slug }: { slug: string }) {
               onClick={() => setRevealed(true)}
               className="absolute inset-0 flex items-center justify-center"
             >
-              <span className="rounded-lg border border-brand/40 bg-journal-bg/80 px-4 py-2 text-xs font-medium text-brand-light backdrop-blur-sm">
+              <span className="rounded-lg border border-brand/40 bg-journal-bg/80 px-4 py-2 text-xs font-medium text-brand-light backdrop-blur-fix-sm">
                 🧠 先在脑中默写一遍，点击核对
               </span>
             </button>
