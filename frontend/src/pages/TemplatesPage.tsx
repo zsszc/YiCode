@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
-import { BookMarked, Eye, EyeOff, Copy, Check, Zap, Target, AlertTriangle, ExternalLink } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useQuery, useMutation } from '@tanstack/react-query'
+import { BookMarked, Eye, EyeOff, Copy, Check, Zap, Target, AlertTriangle, ExternalLink, Dices, Loader2 } from 'lucide-react'
 import { templatesApi, problemsApi } from '@/services/api'
 import type { TemplateSummary } from '@/types'
 
@@ -83,6 +83,12 @@ function TemplateDetailView({ slug }: { slug: string }) {
   })
   const [revealed, setRevealed] = useState(true)
   const [copied, setCopied] = useState(false)
+  const navigate = useNavigate()
+
+  const variant = useMutation({
+    mutationFn: () => templatesApi.generateVariant(slug),
+    onSuccess: d => navigate(`/problems/${d.id}`),
+  })
 
   if (!tpl) return <div className="py-20 text-center text-xs text-journal-muted">加载中...</div>
 
@@ -99,13 +105,38 @@ function TemplateDetailView({ slug }: { slug: string }) {
   return (
     <div className="mx-auto max-w-3xl p-6">
       {/* 头部 */}
-      <div className="mb-5">
-        <h2 className="text-xl font-bold text-white">{tpl.name}</h2>
-        <p className="mt-1.5 flex items-start gap-1.5 text-sm text-journal-muted">
-          <Target size={14} className="mt-1 shrink-0 text-brand-light" />
-          {tpl.scenario}
-        </p>
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-white">{tpl.name}</h2>
+          <p className="mt-1.5 flex items-start gap-1.5 text-sm text-journal-muted">
+            <Target size={14} className="mt-1 shrink-0 text-brand-light" />
+            {tpl.scenario}
+          </p>
+        </div>
+        <button
+          onClick={() => variant.mutate()}
+          disabled={variant.isPending}
+          className="flex shrink-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-brand to-[#4f8ef7] px-4 py-2 text-xs font-semibold text-white shadow-glow transition-all hover:brightness-110 disabled:opacity-60"
+          title="AI 根据本模板生成一道原创变式题（可判题）"
+        >
+          {variant.isPending ? (
+            <>
+              <Loader2 size={14} className="animate-spin" />
+              AI 出题中（约30秒）...
+            </>
+          ) : (
+            <>
+              <Dices size={14} />
+              AI 变式练习
+            </>
+          )}
+        </button>
       </div>
+      {variant.isError && (
+        <div className="mb-4 rounded-lg border border-hard/30 bg-hard/10 px-3 py-2 text-xs text-hard">
+          出题失败：{(variant.error as any)?.response?.data?.detail ?? '请确认后端服务已启动，稍后重试'}
+        </div>
+      )}
 
       {/* 记忆口诀 */}
       <div className="mb-5 rounded-xl border border-brand/30 bg-gradient-to-r from-brand-dim/70 to-transparent px-4 py-3">

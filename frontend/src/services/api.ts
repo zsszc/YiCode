@@ -128,6 +128,9 @@ export const codeApi = {
 export const templatesApi = {
   list: () => api.get<TemplateSummary[]>('/templates').then(r => r.data),
   get: (slug: string) => api.get<TemplateDetail>(`/templates/${slug}`).then(r => r.data),
+  /** AI 变式出题：生成原创练习题并落库，返回新题 ID */
+  generateVariant: (slug: string) =>
+    api.post<{ id: number; title: string; template: string }>(`/templates/${slug}/variant`).then(r => r.data),
 }
 
 /** 通用 SSE 流读取器：逐段回调文本，遇错误帧抛错 */
