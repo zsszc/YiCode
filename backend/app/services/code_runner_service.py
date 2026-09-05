@@ -34,6 +34,9 @@ BANNED_IMPORTS = {
     "os", "sys", "subprocess", "socket", "urllib", "http", "ftplib",
     "pickle", "marshal", "ctypes", "multiprocessing", "threading",
     "importlib", "pkgutil", "site", "builtins",
+    # 文件系统 / 自省 / 进程控制类，算法题用不到
+    "shutil", "pathlib", "glob", "tempfile", "signal", "gc",
+    "inspect", "pty", "mmap",
 }
 
 # 保留 input（stdin 刷题场景需要）
@@ -46,6 +49,9 @@ BANNED_ATTRIBUTES = {
     "system", "popen", "fork", "kill", "execv", "execve",
     "spawn", "chmod", "chown", "remove", "unlink", "rmdir",
     "mkdir", "makedirs", "rename", "replace",
+    # 防止通过 typing.sys / 帧对象等间接逃逸沙箱
+    "modules", "_getframe", "f_globals", "__globals__", "gi_frame",
+    "__subclasses__", "__builtins__", "sys", "os",
 }
 
 
@@ -142,11 +148,13 @@ _banned_modules = ''' + repr(BANNED_IMPORTS) + '''
 def _safe_import(name, *args, **kwargs):
     base = name.split('.')[0]
     if base in _banned_modules:
-        # 只拦截用户代码直接发起的导入；
-        # 标准库内部的传递导入（如 json -> re -> enum -> sys）放行
-        for _fr in _extract_stack():
-            if _fr.filename == __file__ and _fr.name != '_safe_import':
-                raise ImportError(f"Module '{base}' is not allowed in sandbox")
+        # 只拦截用户代码**直接**发起的导入：直接调用者（_safe_import 的上一帧）
+        # 位于本文件（沙箱临时文件）才拦截；
+        # 标准库内部的传递导入（如 typing/json 内部 import sys）放行。
+        _st = _extract_stack()
+        # _st[-1] 是 _safe_import 自身所在帧，_st[-2] 是发起 import 的帧
+        if len(_st) >= 2 and _st[-2].filename == __file__:
+            raise ImportError(f"Module '{base}' is not allowed in sandbox")
     return _original_import(name, *args, **kwargs)
 
 builtins.__import__ = _safe_import
