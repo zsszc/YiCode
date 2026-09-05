@@ -4,6 +4,7 @@ import { useQuery, useMutation } from '@tanstack/react-query'
 import CodeMirror from '@uiw/react-codemirror'
 import { python } from '@codemirror/lang-python'
 import { keymap } from '@codemirror/view'
+import { indentUnit } from '@codemirror/language'
 import { indentWithTab } from '@codemirror/commands'
 import { linter, lintGutter } from '@codemirror/lint'
 import type { Diagnostic as CMDiagnostic } from '@codemirror/lint'
@@ -176,6 +177,7 @@ export default function ProblemDetailPage() {
     setRunning(true)
     setConsoleTab('tests')
     setJudgeResult(null)
+    setSolved(false) // 重新判题时先收起上次的通过记录条
     try {
       const r = await codeApi.runTests(problemId, code, mode)
       setJudgeResult(r)
@@ -324,7 +326,7 @@ export default function ProblemDetailPage() {
           <CodeMirror
             value={code}
             onChange={updateCode}
-            extensions={[python(), keymap.of([indentWithTab]), lintExtension, completionExtension]}
+            extensions={[python(), indentUnit.of('    '), keymap.of([indentWithTab]), lintExtension, completionExtension]}
             theme="dark"
             height="100%"
             style={{ height: '100%' }}

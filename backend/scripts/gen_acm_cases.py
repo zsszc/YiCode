@@ -113,6 +113,8 @@ async def gen_one(client: httpx.AsyncClient, settings, prob: dict, retries: int 
             ]
             reference = str(data.get("reference") or "")
             acm_starter = str(data.get("acm_starter") or "")
+            # 规整空行：行尾空格去掉、3 个及以上连续换行压成 2 个
+            acm_starter = re.sub(r"\n{3,}", "\n\n", re.sub(r"[ \t]+\n", "\n", acm_starter))
             if not io_tests or not reference or not acm_starter:
                 raise ValueError("缺少必要字段")
             ok, why = verify(reference, io_tests)
