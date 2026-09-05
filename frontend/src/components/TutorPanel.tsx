@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
 import { Sparkles, Lightbulb, Star, Send, Loader2, X } from 'lucide-react'
 import { tutorApi, profileApi } from '@/services/api'
 import type { ChatMsg, CodeReviewResponse } from '@/types'
@@ -140,7 +142,7 @@ export default function TutorPanel({ problemId, problemTitle, getCode, onClose }
             >
               {m.role === 'assistant' ? (
                 <div className="prose-dark">
-                  <ReactMarkdown>{m.content}</ReactMarkdown>
+                  <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{m.content}</ReactMarkdown>
                   {busy && i === messages.length - 1 && m.content !== '' && (
                     <span className="ml-0.5 inline-block h-3.5 w-1.5 animate-pulse rounded-sm bg-brand-light align-text-bottom" />
                   )}

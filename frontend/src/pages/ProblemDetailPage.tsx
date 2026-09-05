@@ -9,6 +9,9 @@ import { indentWithTab } from '@codemirror/commands'
 import { linter, lintGutter } from '@codemirror/lint'
 import type { Diagnostic as CMDiagnostic } from '@codemirror/lint'
 import ReactMarkdown from 'react-markdown'
+import remarkMath from 'remark-math'
+import rehypeKatex from 'rehype-katex'
+import 'katex/dist/katex.min.css'
 import {
   ArrowLeft,
   Play,
@@ -233,7 +236,7 @@ export default function ProblemDetailPage() {
         <div className="flex-1 overflow-y-auto p-4">
           {leftTab === 'desc' ? (
             <div className="prose-dark">
-              <ReactMarkdown>{problem.description || '本题题面整理中，可以先看右侧代码模板动手尝试，或问 AI Tutor 获取题目讲解。'}</ReactMarkdown>
+              <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{problem.description || '本题题面整理中，可以先看右侧代码模板动手尝试，或问 AI Tutor 获取题目讲解。'}</ReactMarkdown>
             </div>
           ) : (
             <NoteEditor problemId={problemId} />
