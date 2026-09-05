@@ -70,6 +70,9 @@ export const tutorApi = {
     }).then(r => r.data),
   logs: (limit: number = 20) =>
     api.get('/tutor/logs', { params: { limit } }).then(r => r.data),
+  /** 按题目取回历史对话消息（时间正序） */
+  history: (problemId: number, limit: number = 50) =>
+    api.get<ChatMsg[]>(`/tutor/history/${problemId}`, { params: { limit } }).then(r => r.data),
   chat: (problemId: number | null, message: string, history: ChatMsg[], userCode?: string) =>
     api.post<ChatResponse>('/tutor/chat', {
       problem_id: problemId,

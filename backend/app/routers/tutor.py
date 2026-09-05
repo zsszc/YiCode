@@ -140,6 +140,13 @@ async def chat_stream(req: ChatRequest, db: Session = Depends(get_db)):
     )
 
 
+@router.get("/history/{problem_id}")
+def get_chat_history(problem_id: int, limit: int = 50, db: Session = Depends(get_db)):
+    """按题目取回历史对话消息（user/assistant 交替，时间正序）。"""
+    service = AITutorService(db)
+    return service.get_chat_history(problem_id=problem_id, limit=limit)
+
+
 @router.get("/logs", response_model=list[TutorLogItem])
 def get_logs(limit: int = 20, db: Session = Depends(get_db)):
     """获取 AI Tutor 交互历史。"""

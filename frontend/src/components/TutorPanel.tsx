@@ -14,15 +14,29 @@ interface Props {
 }
 
 export default function TutorPanel({ problemId, problemTitle, getCode, onClose }: Props) {
-  const [messages, setMessages] = useState<ChatMsg[]>([
-    {
-      role: 'assistant',
-      content: `你好！我是你的 AI 刷题导师 🐇\n\n我们正在攻克 **#${problemId} ${problemTitle}**。你可以：\n- 点击下方「解题提示」逐级获取思路\n- 直接问我任何问题（比如"这题怎么做"、"帮我看看代码"）\n- 写完代码后点「审查代码」让我点评`,
-    },
-  ])
+  const greeting: ChatMsg = {
+    role: 'assistant',
+    content: `你好！我是你的 AI 刷题导师 🐇\n\n我们正在攻克 **#${problemId} ${problemTitle}**。你可以：\n- 点击下方「解题提示」逐级获取思路\n- 直接问我任何问题（比如"这题怎么做"、"帮我看看代码"）\n- 写完代码后点「审查代码」让我点评`,
+  }
+  const [messages, setMessages] = useState<ChatMsg[]>([greeting])
+  const [restored, setRestored] = useState(0)
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
   const listRef = useRef<HTMLDivElement>(null)
+
+  // 打开面板时加载本题历史对话；有历史则恢复，无历史保留欢迎语
+  useEffect(() => {
+    let cancelled = false
+    tutorApi.history(problemId)
+      .then(hist => {
+        if (cancelled || !hist.length) return
+        setMessages(hist)
+        setRestored(hist.length)
+      })
+      .catch(() => { /* 静默回退到欢迎语 */ })
+    return () => { cancelled = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [problemId])
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' })
@@ -131,6 +145,13 @@ export default function TutorPanel({ problemId, problemTitle, getCode, onClose }
 
       {/* 消息列表 */}
       <div ref={listRef} className="flex-1 space-y-4 overflow-y-auto p-4">
+        {restored > 0 && (
+          <div className="flex items-center gap-2 text-[11px] text-journal-muted">
+            <span className="h-px flex-1 bg-line" />
+            已恢复 {restored} 条历史对话
+            <span className="h-px flex-1 bg-line" />
+          </div>
+        )}
         {messages.map((m, i) => (
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div

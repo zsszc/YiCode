@@ -219,12 +219,30 @@ class AITutorService:
             problem_id=problem_id,
             request_type="chat",
             prompt=message[:500],
-            response="".join(parts)[:2000],
+            response="".join(parts)[:5000],
             tokens_used=0,
             latency_ms=int((time.time() - start) * 1000),
         )
         self.db.add(log)
         self.db.commit()
+
+    def get_chat_history(self, problem_id: int, user_id: int = 1, limit: int = 50) -> list[dict]:
+        """按题目取回历史对话（chat 类型），按时间正序展开为消息列表。"""
+        rows = (
+            self.db.query(AITutorLog)
+            .filter(AITutorLog.problem_id == problem_id,
+                    AITutorLog.request_type == "chat")
+            .order_by(AITutorLog.created_at.desc())
+            .limit(limit)
+            .all()
+        )
+        messages: list[dict] = []
+        for row in reversed(rows):
+            if row.prompt:
+                messages.append({"role": "user", "content": row.prompt})
+            if row.response:
+                messages.append({"role": "assistant", "content": row.response})
+        return messages
 
     def get_logs(self, user_id: int = 1, limit: int = 20) -> list[dict]:
         """获取 AI Tutor 交互历史。"""
