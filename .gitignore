@@ -33,3 +33,5 @@ __pycache__/
 .pytest_cache/
 *.pyc
 aliyun_key.pem.pub
+data/*.db-shm
+data/*.db-wal
