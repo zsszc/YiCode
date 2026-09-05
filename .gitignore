@@ -32,3 +32,4 @@ dist/
 __pycache__/
 .pytest_cache/
 *.pyc
+aliyun_key.pem.pub
